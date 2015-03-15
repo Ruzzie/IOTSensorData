@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Http;
 
 namespace Ruzzie.SensorData.Web
@@ -13,5 +14,10 @@ namespace Ruzzie.SensorData.Web
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             GlobalConfiguration.Configuration.EnsureInitialized();
         }
+
+        protected void Application_PreSendRequestHeaders(object sender, EventArgs e)
+        {
+            HttpContext.Current.Response.Headers.Remove("Server");
+        }         
     }
 }
