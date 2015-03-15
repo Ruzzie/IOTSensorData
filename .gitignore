@@ -181,3 +181,8 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+*.DotSettings
+Source/SensorDataApi/Ruzzie.SensorData.Web.IntegrationTests/app.Debug.config
+Source/SensorDataApi/Ruzzie.SensorData.Web.IntegrationTests/app.Release.config
+Source/SensorDataApi/Ruzzie.SensorData.Web/Web.Debug.config
+Source/SensorDataApi/Ruzzie.SensorData.Web/Web.Release.config

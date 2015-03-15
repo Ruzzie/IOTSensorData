@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using Ruzzie.SensorData.Web.Cache;
+using Ruzzie.SensorData.Web.GetData;
+using Ruzzie.SensorData.Web.PushData;
+using Ruzzie.SensorData.Web.Repository;
+
+namespace Ruzzie.SensorData.Web.IntegrationTests
+{
+    [TestFixture]
+    public class IntegrationTestForServices
+    {
+        [Test]
+        public void IntegrationTest()
+        {
+            //Arrange
+            IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
+            SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);
+            IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo );
+            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
+            IPushDataService pushDataService = new PushDataService(dataWriteService);
+            IGetDataService getDataService = new GetDataService(dateReadService);
+
+            string thingName = Guid.NewGuid().ToString();
+
+            //Act
+            pushDataService.PushData(thingName, DateTime.Now,
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") });
+            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
+
+            //Assert
+            Assert.That(getDataResult.ResultData.Temperature, Is.EqualTo("25.0"));
+        }
+
+        [Test]
+        public void GetLatestForNonExistantThingShouldNotThrowException()
+        {
+
+            //Arrange
+            IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
+            SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);            
+            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);            
+            IGetDataService getDataService = new GetDataService(dateReadService);
+
+            string thingName = Guid.NewGuid().ToString();
+
+            //Act            
+            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
+
+            //Assert
+            Assert.That(getDataResult.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNotFound));
+            
+        }
+        
+    }
+}
