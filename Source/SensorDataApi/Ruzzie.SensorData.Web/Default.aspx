@@ -1,4 +1,7 @@
-﻿
+﻿<%@ Page Language="C#" %>
+<%   
+    string url = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+ %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -43,7 +46,7 @@
                 }
 
                 window.swashbuckleConfig = {
-                    rootUrl: 'http://localhost:57850',
+                    rootUrl: '<%=url%>',
                     discoveryPaths: arrayFrom('docs/v1'),
                     booleanValues: arrayFrom('true|false'),
                     validatorUrl: stringOrNullFrom(''),
