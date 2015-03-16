@@ -102,7 +102,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\index.html" />
+    <Content Include="Content\404.html" />
+    <Content Include="Content\ErrorPage.html" />
+    <Content Include="index.html" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
   </ItemGroup>
