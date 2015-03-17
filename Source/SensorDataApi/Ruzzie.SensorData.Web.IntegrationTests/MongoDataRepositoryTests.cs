@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using Ruzzie.SensorData.Web.PushData;
 using Ruzzie.SensorData.Web.Repository;
 
 namespace Ruzzie.SensorData.Web.IntegrationTests
@@ -19,7 +18,6 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             //Clean all test data
             _repository.RemoveAllSensorDataItems();
-
         }
 
         [Test]

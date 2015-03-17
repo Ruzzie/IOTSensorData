@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.Web.Repository
 {

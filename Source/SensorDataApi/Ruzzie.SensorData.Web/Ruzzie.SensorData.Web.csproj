@@ -132,6 +132,7 @@
     <Compile Include="PushData\PushDataResult.cs" />
     <Compile Include="PushData\PushDataResultCode.cs" />
     <Compile Include="PushData\PushDataService.cs" />
+    <Compile Include="SensorItemDataDocument.cs" />
     <Compile Include="Repository\SensorItemDataRepositoryMongo.cs" />
   </ItemGroup>
   <ItemGroup>
