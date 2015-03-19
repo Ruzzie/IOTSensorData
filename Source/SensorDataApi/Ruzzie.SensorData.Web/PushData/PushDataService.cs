@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Ruzzie.SensorData.Web.PushData
 {
     public interface IPushDataService
     {
         PushDataResult PushData(string thingName, DateTime currentDateTime, List<KeyValuePair<string, string>> keyValuePairs);
-        PushDataResult PushData(string thingName, DateTime currentDateTime, string jsonContentString);
+        PushDataResult PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content);
 
         Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime,
             IEnumerable<KeyValuePair<string, string>> keyValuePairs);
 
-        Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime, string jsonContentString);
+        Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime, DynamicDictionaryObject content);
     }
 
     public class PushDataService : IPushDataService
@@ -31,9 +30,9 @@ namespace Ruzzie.SensorData.Web.PushData
             return PushDataAsync(thingName, currentDateTime, keyValuePairs).Result;
         }
 
-        public PushDataResult PushData(string thingName, DateTime currentDateTime, string jsonContentString)
+        public PushDataResult PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
         {
-            return PushDataAsync(thingName, currentDateTime, jsonContentString).Result;
+            return PushDataAsync(thingName, currentDateTime, content).Result;
         }
 
         public async Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime,
@@ -71,7 +70,7 @@ namespace Ruzzie.SensorData.Web.PushData
             return result;
         }
 
-        public async Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime, string jsonContentString)
+        public async Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
         {
             var result = new PushDataResult {TimeStamp = currentDateTime};
             result.ThingName = thingName;
@@ -82,34 +81,34 @@ namespace Ruzzie.SensorData.Web.PushData
                 return result;
             }            
 
-            if (string.IsNullOrWhiteSpace(jsonContentString))
+            //if (string.IsNullOrWhiteSpace(jsonContentString))
+            //{
+            //    result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
+            //    return result;
+            //}
+
+            //DynamicDictionaryObject contentObject;
+            //try
+            //{
+            //    contentObject = JsonConvert.DeserializeObject<DynamicDictionaryObject>(jsonContentString);
+            //}
+            //catch (Exception e)
+            //{
+            //    result.PushDataResultCode = PushDataResultCode.InvalidData;
+            //    result.ResultData = new DynamicDictionaryObject();
+            //    result.ResultData.ErrorMessage = e.Message;
+            //    return result;
+            //}
+
+            if (content == null || !content.GetDynamicMemberNames().Any())
             {
                 result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
                 return result;
             }
 
-            DynamicDictionaryObject contentObject;
-            try
-            {
-                contentObject = JsonConvert.DeserializeObject<DynamicDictionaryObject>(jsonContentString);
-            }
-            catch (Exception e)
-            {
-                result.PushDataResultCode = PushDataResultCode.InvalidData;
-                result.ResultData = new DynamicDictionaryObject();
-                result.ResultData.ErrorMessage = e.Message;
-                return result;
-            }
+            result.ResultData = content;
 
-            if (contentObject == null || !contentObject.GetDynamicMemberNames().Any())
-            {
-                result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
-                return result;
-            }
-
-            result.ResultData = contentObject;            
-
-            await DataWriteService.CreateOrUpdateDataForThing(thingName, result.TimeStamp, contentObject);
+            await DataWriteService.CreateOrUpdateDataForThing(thingName, result.TimeStamp, content);
             return result;
         }
 

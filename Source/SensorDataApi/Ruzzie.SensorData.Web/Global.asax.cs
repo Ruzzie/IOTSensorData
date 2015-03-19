@@ -21,6 +21,6 @@ namespace Ruzzie.SensorData.Web
             {
                 HttpContext.Current.Response.Headers.Remove("Server");
             }
-        }         
+        }                      
     }
 }

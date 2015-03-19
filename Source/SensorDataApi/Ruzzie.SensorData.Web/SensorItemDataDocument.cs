@@ -1,7 +1,6 @@
 ﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
-using Newtonsoft.Json;
 
 namespace Ruzzie.SensorData.Web
 {
@@ -13,8 +12,7 @@ namespace Ruzzie.SensorData.Web
 
         [BsonId(IdGenerator = typeof (StringObjectIdGenerator))]
         public string Id { get; set; }
-
-        //[BsonIgnore]
+        
         public dynamic Content { get; set; }
 
         //Only for serialization purposes

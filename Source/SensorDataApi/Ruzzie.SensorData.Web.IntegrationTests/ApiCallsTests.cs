@@ -71,7 +71,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         public void PushData_With_Valid_Post_Should_Succeed()
         {
             var response = _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest3", new {Temperature = "22"}).Result;
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK),response.Content.ReadAsStringAsync().Result);
 
             var resultObject = response.Content.ReadAsAsync<PushDataResult>().Result;
 

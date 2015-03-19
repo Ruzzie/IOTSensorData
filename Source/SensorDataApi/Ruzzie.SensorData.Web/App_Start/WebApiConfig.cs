@@ -9,12 +9,11 @@ namespace Ruzzie.SensorData.Web
         public static void Register(HttpConfiguration config)
         {
             
-            config.Routes.MapHttpRoute("DefaultApi", "{controller}/for/{thing}");
-            //config.Routes.MapHttpRoute("Home", "",new);
+            config.Routes.MapHttpRoute("DefaultApi", "{controller}/for/{thing}");            
             config.MapHttpAttributeRoutes();
 
             config.Formatters.Clear();
-            config.Formatters.Add(new JsonMediaTypeFormatter());
+            config.Formatters.Add(new JsonMediaTypeFormatter());            
             config.Formatters.Add(new FormUrlEncodedMediaTypeFormatter());
             config.EnableCors(new EnableCorsAttribute("*","*","GET,POST"));
             //config.Formatters.Add(new XmlMediaTypeFormatter());
