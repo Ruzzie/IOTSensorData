@@ -7,93 +7,32 @@ using Ruzzie.SensorData.Web.Cache;
 
 namespace Ruzzie.SensorData.UnitTests
 {
+
     [TestFixture]
-    public class WriteThroughLocalCacheTests
-    {
-        readonly WriteThroughCacheLocal _cache = new WriteThroughCacheLocal();
+    public class LocalWriteThroughCacheTests : WriteThroughCacheTestBase{
 
-        //ordering in tests is probably required, concurrency ...
-
-        [Test]
-        public void GetCachedItemAfterStoring()
+        public LocalWriteThroughCacheTests(): base(new WriteThroughCacheLocal())
         {
-            //Arrange
-            DateTime current = DateTime.Now;
-            var document = new SensorItemDataDocument {Content = new DynamicDictionaryObject(), Created = current,ThingName = "SmokeTest1"};
-            _cache.Update(document).Wait();
-            
-            //Act & Asset
-            Assert.That(_cache.GetLatest("SmokeTest1").ThingName,Is.EqualTo("SmokeTest1"));
-        }
-
-        [Test]
-        public void NoCacheItemFoundShouldReturnNull()
-        {
-            //Act & Asset
-            Assert.That(_cache.GetLatest(Guid.NewGuid().ToString()), Is.Null);
-        }
-
-        [Test]
-        public async void OnlyLatestItemShouldBeCached()
-        {
-            //Arrange
-            DateTime current = new DateTime(2015,12,1);
-            DateTime past = new DateTime(2001,12,25);
-            var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = current, ThingName = "SmokeTest2" };
-            
-            await _cache.Update(document);
-            var secondDocumentForThing = document.DeepClone();
-            secondDocumentForThing.Created = past;
-
-            await _cache.Update(secondDocumentForThing);
-
-            //Act & Asset
-            Assert.That(_cache.GetLatest("SmokeTest2").Created, Is.EqualTo(current));
-        }
-
-        [Test]
-        public void MustNotStoreNullValue()
-        {
-            //Arrange                        
-            var returnedItem = _cache.Update(null);
-
-            //Act & Asset
-            Assert.That(returnedItem.Result, Is.EqualTo(null));
-        }
-
-
-        [Test]
-        public void PruneCacheItemsOlderThanGivenValue()
-        {
-            //Arrange
-            DateTime current = DateTime.Now;
-            var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = current, ThingName = "SmokeTest3" };
-            _cache.Update(document).Wait();
-
-            int count = _cache.PruneOldestItemCacheForItemsOlderThan(new TimeSpan(1)).Result;//all items
-
-            Assert.That(_cache.GetLatest("SmokeTest3"), Is.Null);
-            Assert.That(count, Is.GreaterThanOrEqualTo(1));
         }
 
         [Test]
         public void CacheTest()
-        {            
+        {
             DateTime dateTime = DateTime.Now;
             Parallel.For(0, 20000, async i =>
-            {                
-                var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = dateTime.Subtract(new TimeSpan(0,0,0,0,i)), ThingName = Guid.NewGuid().ToString() };
-                await _cache.Update(document);
+            {
+                var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = dateTime.Subtract(new TimeSpan(0, 0, 0, 0, i)), ThingName = Guid.NewGuid().ToString() };
+                await Cache.Update(document);
             });
 
-            _cache.PruneCache();
+            ((WriteThroughCacheLocal) Cache).PruneCache();
 
-            int count = _cache.PruneOldestItemCacheForItemsOlderThan(new TimeSpan(0,0,0,0,10000)).Result;//about half the items
+            int count = Cache.PruneOldestItemCacheForItemsOlderThan(new TimeSpan(0, 0, 0, 0, 10000)).Result;//about half the items
 
             Assert.That(count, Is.LessThanOrEqualTo(12000));
         }
     }
-    
+
 
     [TestFixture]
     public class CloneWithSerializationTests

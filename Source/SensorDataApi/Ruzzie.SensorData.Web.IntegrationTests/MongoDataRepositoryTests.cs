@@ -12,7 +12,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
     public class MongoDataRepositoryTests
     {
         private SensorItemDataRepositoryMongo _repository;
-        public static readonly string ConnString = Container.ConnString;
+        public static readonly string ConnString = Container.MongoConnString;
 
         [TestFixtureSetUp]
         public void SetUp()

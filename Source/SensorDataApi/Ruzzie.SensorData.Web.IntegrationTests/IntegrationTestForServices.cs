@@ -16,9 +16,11 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         {
             //Arrange
             IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
+            IWriteThroughCache writeThroughRedisCache = new WriteThroughRedisCache(Container.RedisConnString);
             SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);
             IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo );
-            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
+            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, writeThroughRedisCache,
+                sensorItemDataRepositoryMongo);
             IPushDataService pushDataService = new PushDataService(dataWriteService);
             IGetDataService getDataService = new GetDataService(dateReadService);
 
@@ -38,9 +40,11 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         {
             //Arrange
             IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
+            IWriteThroughCache writeThroughRedisCache = new WriteThroughRedisCache(Container.RedisConnString);
             SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);
             IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
-            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
+            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, writeThroughRedisCache,
+                sensorItemDataRepositoryMongo);
             IPushDataService pushDataService = new PushDataService(dataWriteService);
             IGetDataService getDataService = new GetDataService(dateReadService);
 
@@ -49,7 +53,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") });
 
             //Act            
-            writeThroughCache.Reset();
+            writeThroughCache.ResetLatestEntryCache();
             GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
             
 
@@ -61,11 +65,12 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         [Test]
         public void GetLatestForNonExistantThingShouldNotThrowException()
         {
-
             //Arrange
             IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
+            IWriteThroughCache writeThroughRedisCache = new WriteThroughRedisCache(Container.RedisConnString);
             SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);            
-            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);            
+            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache,writeThroughRedisCache, sensorItemDataRepositoryMongo);
+            
             IGetDataService getDataService = new GetDataService(dateReadService);
 
             string thingName = Guid.NewGuid().ToString();

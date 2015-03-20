@@ -72,6 +72,9 @@
     <Reference Include="Sigil">
       <HintPath>..\packages\Sigil.4.4.0\lib\net45\Sigil.dll</HintPath>
     </Reference>
+    <Reference Include="StackExchange.Redis">
+      <HintPath>..\packages\StackExchange.Redis.1.0.414\lib\net45\StackExchange.Redis.dll</HintPath>
+    </Reference>
     <Reference Include="Swashbuckle.Core">
       <HintPath>..\packages\Swashbuckle.Core.5.0.4\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
@@ -134,6 +137,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Cache\IWriteThroughCache.cs" />
     <Compile Include="Cache\WriteThroughCacheLocal.cs" />
+    <Compile Include="Cache\WriteThroughRedisCache.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="Controllers\GetDataController.cs" />
     <Compile Include="GetData\DataReadServiceWithCache.cs" />

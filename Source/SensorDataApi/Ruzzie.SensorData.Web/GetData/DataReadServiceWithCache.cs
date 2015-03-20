@@ -8,31 +8,40 @@ namespace Ruzzie.SensorData.Web.GetData
     {
         private readonly ISensorItemDataRepository _sensorItemDataRepositoryMongo;
 
-        public DataReadServiceWithCache(IWriteThroughCache writeThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
+        public DataReadServiceWithCache(IWriteThroughCache tierOnewriteThroughCache, IWriteThroughCache tierTwowriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
         {
             _sensorItemDataRepositoryMongo = sensorItemDataRepositoryMongo;
-            WriteThroughCache = writeThroughCache;
+            TierOnewriteThroughCache = tierOnewriteThroughCache;
+            TierTwowriteThroughCache = tierTwowriteThroughCache;
         }
 
-        protected IWriteThroughCache WriteThroughCache { get; set; }
+        protected IWriteThroughCache TierOnewriteThroughCache { get; set; }
+        protected IWriteThroughCache TierTwowriteThroughCache { get; set; }
 
         public async Task<SensorItemDataDocument> GetLatestEntryForThing(string thingName)
         {
-            //1. look in cache
-            SensorItemDataDocument itemFromCache = WriteThroughCache.GetLatest(thingName);
+            //1. look in tier 1 cache
+            SensorItemDataDocument itemFromCache = await TierOnewriteThroughCache.GetLatest(thingName);
             if (itemFromCache != null)
             {
                 return itemFromCache;
             }
-            //2. read from real datastore
+
+            //2. look in tier 2 cache
+            itemFromCache = await TierTwowriteThroughCache.GetLatest(thingName);
+
+            if (itemFromCache != null)
+            {
+                return itemFromCache;
+            }                     
+            //3. read from real datastore
             return await StoreDocumentInCacheIfNotNull(_sensorItemDataRepositoryMongo.GetLatest(thingName));
         }
 
         private async Task<SensorItemDataDocument> StoreDocumentInCacheIfNotNull(Task<SensorItemDataDocument> getLatest)
-        {
-            SensorItemDataDocument documentFromStore = await getLatest;            
-            await WriteThroughCache.Update(documentFromStore);
-            return documentFromStore;
+        {            
+            await Task.WhenAll(TierOnewriteThroughCache.Update(await getLatest),TierTwowriteThroughCache.Update(await getLatest));
+            return await getLatest;
         }
     }
 }

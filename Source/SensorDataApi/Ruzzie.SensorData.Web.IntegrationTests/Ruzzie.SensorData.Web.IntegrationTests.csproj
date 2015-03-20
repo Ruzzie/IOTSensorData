@@ -99,6 +99,7 @@
     <Compile Include="IntegrationTestForServices.cs" />
     <Compile Include="MongoDataRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RedisWriteTroughCacheTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -111,6 +112,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ruzzie.SensorData.UnitTests\Ruzzie.SensorData.UnitTests.csproj">
+      <Project>{A8C86891-3AE4-46E3-8651-B12BDA190C8F}</Project>
+      <Name>Ruzzie.SensorData.UnitTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ruzzie.SensorData.Web\Ruzzie.SensorData.Web.csproj">
       <Project>{D95F5DE0-7648-439E-AAE7-9A7665555BF9}</Project>
       <Name>Ruzzie.SensorData.Web</Name>

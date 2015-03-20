@@ -8,16 +8,21 @@ namespace Ruzzie.SensorData.Web
 {
     internal static class Container
     {
-        internal static readonly string ConnString;
+        internal static readonly string MongoConnString;
+        internal static readonly string RedisConnString;
 
         static Container()
         {
             MongoClassMapBootstrap.Register();
-            ConnString = ConfigurationManager.AppSettings["mongodbconnectionstring"];
-            ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(ConnString);
+            MongoConnString = ConfigurationManager.AppSettings["mongodbconnectionstring"];
+            RedisConnString = ConfigurationManager.AppSettings["redisconnectionstring"];
+            ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoConnString);
             var writeThroughCacheLocal = new WriteThroughCacheLocal();
+            var writeThroughCacheRedis = new WriteThroughRedisCache(RedisConnString);
+
             PushDataService = new PushDataService(new DataWriteServiceWithCache(writeThroughCacheLocal, sensorItemDataRepositoryMongo));
-            GetDataService = new GetDataService(new DataReadServiceWithCache(writeThroughCacheLocal, sensorItemDataRepositoryMongo));
+            
+            GetDataService = new GetDataService(new DataReadServiceWithCache(writeThroughCacheLocal,writeThroughCacheRedis, sensorItemDataRepositoryMongo));
         }
 
         public static IPushDataService PushDataService { get; private set; }

@@ -3,19 +3,18 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 
 namespace Ruzzie.SensorData.Web
-{
+{    
     public static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
         {
-            
-            config.Routes.MapHttpRoute("DefaultApi", "{controller}/for/{thing}");            
+            config.Routes.MapHttpRoute("DefaultApi", "{controller}/for/{thing}");
             config.MapHttpAttributeRoutes();
 
             config.Formatters.Clear();
-            config.Formatters.Add(new JsonMediaTypeFormatter());            
+            config.Formatters.Add(new JsonMediaTypeFormatter());//Todo: jil implementation
             config.Formatters.Add(new FormUrlEncodedMediaTypeFormatter());
-            config.EnableCors(new EnableCorsAttribute("*","*","GET,POST"));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "GET,POST"));
             //config.Formatters.Add(new XmlMediaTypeFormatter());
 
             // Uncomment the following line of code to enable query support for actions with an IQueryable or IQueryable<T> return type.

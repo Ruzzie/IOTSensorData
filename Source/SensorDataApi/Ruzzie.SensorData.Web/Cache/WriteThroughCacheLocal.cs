@@ -44,14 +44,17 @@ namespace Ruzzie.SensorData.Web.Cache
             });
         }
 
-        public SensorItemDataDocument GetLatest(string thingName)
+        public async Task<SensorItemDataDocument> GetLatest(string thingName)
         {
-            SensorItemDataDocument document;
-            if (LatestEntryCache.TryGetValue(thingName, out document))
+            return await Task.Run(() =>
             {
-                return document;
-            }
-            return null;
+                SensorItemDataDocument document;
+                if (LatestEntryCache.TryGetValue(thingName, out document))
+                {
+                    return document;
+                }
+                return null;
+            });
         }
 
         public async Task<int> PruneOldestItemCacheForItemsOlderThan(TimeSpan age)
@@ -62,7 +65,7 @@ namespace Ruzzie.SensorData.Web.Cache
             return await RemoveItems(itemsToPrune);
         }
 
-        public void Reset()
+        public void ResetLatestEntryCache()
         {
             LatestEntryCache.Clear();
         }
