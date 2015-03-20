@@ -12,6 +12,7 @@ namespace Ruzzie.SensorData.Web
 
         static Container()
         {
+            MongoClassMapBootstrap.Register();
             ConnString = ConfigurationManager.AppSettings["mongodbconnectionstring"];
             ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(ConnString);
             var writeThroughCacheLocal = new WriteThroughCacheLocal();

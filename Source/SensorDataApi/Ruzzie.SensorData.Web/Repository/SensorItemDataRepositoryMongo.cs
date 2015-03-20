@@ -1,61 +1,48 @@
-﻿using System.Linq;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.IdGenerators;
+﻿using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 namespace Ruzzie.SensorData.Web.Repository
 {
-    
     public interface ISensorItemDataRepository
     {
-        IQueryable<SensorItemDataDocument> SensorItemDataDocuments { get; }
-        void CreateOrAdd(SensorItemDataDocument sensorItemData);
-    }   
+        Task CreateOrAdd(SensorItemDataDocument sensorItemData);
+        Task<SensorItemDataDocument> GetLatest(string thingName);
+    }
 
     public class SensorItemDataRepositoryMongo : ISensorItemDataRepository
     {
-        private readonly MongoDatabase _mongoDatabase;
+        private readonly IMongoDatabase _mongoDatabase;
 
         public SensorItemDataRepositoryMongo(string connectionstring)
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof (SensorItemDataDocument)))
-            {
-                BsonClassMap.RegisterClassMap<SensorItemDataDocument>(
-                    cm =>
-                    {                        
-                        cm.MapIdProperty(obj => obj.Id).SetIdGenerator(new StringObjectIdGenerator());
-                        cm.MapProperty(obj => obj.ThingName);
-                        cm.MapProperty(obj => obj.Created);                                                                
-                        //cm.MapProperty(obj => obj.RawContent).SetElementName("Content");                        
-                        cm.MapProperty(obj => obj.Content);
-                    });
-            }
-
             var mongoClient = new MongoClient(connectionstring);
 
-            MongoServer mongoServer = mongoClient.GetServer();
-            _mongoDatabase = mongoServer.GetDatabase("sensordatatestdb");
+            _mongoDatabase = mongoClient.GetDatabase("sensordatatestdb");
         }
 
-        public MongoCollection<SensorItemDataDocument> SensorItemDataCollection
+        public IMongoCollection<SensorItemDataDocument> SensorItemDataCollection
         {
             get { return _mongoDatabase.GetCollection<SensorItemDataDocument>("SensorItemData"); }
         }
 
-        public IQueryable<SensorItemDataDocument> SensorItemDataDocuments
+        public async Task CreateOrAdd(SensorItemDataDocument sensorItemData)
         {
-            get { return SensorItemDataCollection.AsQueryable(); }
+            await SensorItemDataCollection.InsertOneAsync(sensorItemData);
         }
 
-        public void CreateOrAdd(SensorItemDataDocument sensorItemData)
+        public async Task<SensorItemDataDocument> GetLatest(string thingName)
         {
-            SensorItemDataCollection.Insert(sensorItemData);
+            return
+                await
+                    SensorItemDataCollection.Find(item => item.ThingName == thingName)
+                        .SortByDescending(item => item.Created)
+                        .FirstOrDefaultAsync();
         }
 
-        internal void RemoveAllSensorDataItems()
+        internal Task<DeleteResult> RemoveAllSensorDataItems()
         {
-            _mongoDatabase.GetCollection<SensorItemDataDocument>("SensorItemData").RemoveAll();
+            return SensorItemDataCollection.DeleteManyAsync(new BsonDocument());
         }
     }
 }

@@ -23,9 +23,14 @@ namespace Ruzzie.SensorData.Web.Cache
             LatestEntryCache = new ConcurrentDictionary<string, SensorItemDataDocument>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        public async Task Update(SensorItemDataDocument dataDocument)
+        public async Task<SensorItemDataDocument> Update(SensorItemDataDocument dataDocument)
         {
-            await Task.Run(() =>
+            if (dataDocument == null)
+            {
+                return await Task.FromResult<SensorItemDataDocument>(null);
+            }
+                            
+            return await Task.Run(() =>
             {
                 LatestEntryCache.AddOrUpdate(dataDocument.ThingName, dataDocument, (key, oldValue) =>
                 {
@@ -35,6 +40,7 @@ namespace Ruzzie.SensorData.Web.Cache
                     }
                     return oldValue;
                 });
+                return dataDocument;
             });
         }
 
@@ -54,6 +60,11 @@ namespace Ruzzie.SensorData.Web.Cache
                 LatestEntryCache.AsParallel().Where(item => item.Value.Created < DateTime.Now.Subtract(age)).Select(item => item.Key);
 
             return await RemoveItems(itemsToPrune);
+        }
+
+        public void Reset()
+        {
+            LatestEntryCache.Clear();
         }
 
 

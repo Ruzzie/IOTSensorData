@@ -4,14 +4,13 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web;
 using Ruzzie.SensorData.Web.Cache;
-using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.UnitTests
 {
     [TestFixture]
     public class WriteThroughLocalCacheTests
     {
-        WriteThroughCacheLocal _cache = new WriteThroughCacheLocal();
+        readonly WriteThroughCacheLocal _cache = new WriteThroughCacheLocal();
 
         //ordering in tests is probably required, concurrency ...
 
@@ -35,21 +34,31 @@ namespace Ruzzie.SensorData.UnitTests
         }
 
         [Test]
-        public void OnlyLatestItemShouldBeCached()
+        public async void OnlyLatestItemShouldBeCached()
         {
             //Arrange
             DateTime current = new DateTime(2015,12,1);
             DateTime past = new DateTime(2001,12,25);
             var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = current, ThingName = "SmokeTest2" };
             
-            _cache.Update(document);
+            await _cache.Update(document);
             var secondDocumentForThing = document.DeepClone();
             secondDocumentForThing.Created = past;
 
-            _cache.Update(secondDocumentForThing);
+            await _cache.Update(secondDocumentForThing);
 
             //Act & Asset
             Assert.That(_cache.GetLatest("SmokeTest2").Created, Is.EqualTo(current));
+        }
+
+        [Test]
+        public void MustNotStoreNullValue()
+        {
+            //Arrange                        
+            var returnedItem = _cache.Update(null);
+
+            //Act & Asset
+            Assert.That(returnedItem.Result, Is.EqualTo(null));
         }
 
 
@@ -59,7 +68,7 @@ namespace Ruzzie.SensorData.UnitTests
             //Arrange
             DateTime current = DateTime.Now;
             var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = current, ThingName = "SmokeTest3" };
-            _cache.Update(document);
+            _cache.Update(document).Wait();
 
             int count = _cache.PruneOldestItemCacheForItemsOlderThan(new TimeSpan(1)).Result;//all items
 
@@ -71,10 +80,10 @@ namespace Ruzzie.SensorData.UnitTests
         public void CacheTest()
         {            
             DateTime dateTime = DateTime.Now;
-            Parallel.For(0, 20000, i =>
+            Parallel.For(0, 20000, async i =>
             {                
-                var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = dateTime.Subtract(new TimeSpan(0,0,0,0,i)), ThingName = Guid.NewGuid().ToString() };                
-                _cache.Update(document);                
+                var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = dateTime.Subtract(new TimeSpan(0,0,0,0,i)), ThingName = Guid.NewGuid().ToString() };
+                await _cache.Update(document);
             });
 
             _cache.PruneCache();

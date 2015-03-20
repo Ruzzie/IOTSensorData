@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Ruzzie.SensorData.Web.Cache;
-using Ruzzie.SensorData.Web.PushData;
 using Ruzzie.SensorData.Web.Repository;
 
 namespace Ruzzie.SensorData.Web.GetData
@@ -27,20 +25,14 @@ namespace Ruzzie.SensorData.Web.GetData
                 return itemFromCache;
             }
             //2. read from real datastore
-            await Task.Run(
-                () =>
-                {
-                    SensorItemDataDocument documentFromStore = _sensorItemDataRepositoryMongo.SensorItemDataDocuments.OrderByDescending(
-                        item => item.Created)
-                        .FirstOrDefault(item => item.ThingName == thingName);
-                    if (documentFromStore != null)
-                    {
-                        return WriteThroughCache.Update(documentFromStore);
-                    }
-                    return Task.FromResult<SensorItemDataDocument>(null);
-                });
+            return await StoreDocumentInCacheIfNotNull(_sensorItemDataRepositoryMongo.GetLatest(thingName));
+        }
 
-            return null;
+        private async Task<SensorItemDataDocument> StoreDocumentInCacheIfNotNull(Task<SensorItemDataDocument> getLatest)
+        {
+            SensorItemDataDocument documentFromStore = await getLatest;            
+            await WriteThroughCache.Update(documentFromStore);
+            return documentFromStore;
         }
     }
 }

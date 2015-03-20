@@ -34,6 +34,31 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         }
 
         [Test]
+        public void UncachedItemShouldBeReturned()
+        {
+            //Arrange
+            IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
+            SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);
+            IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
+            IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
+            IPushDataService pushDataService = new PushDataService(dataWriteService);
+            IGetDataService getDataService = new GetDataService(dateReadService);
+
+            string thingName = Guid.NewGuid().ToString();
+            pushDataService.PushData(thingName, DateTime.Now,
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") });
+
+            //Act            
+            writeThroughCache.Reset();
+            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
+            
+
+            //Assert
+            Assert.That(getDataResult.ResultData, Is.Not.Null);
+            Assert.That(getDataResult.ResultData.Temperature, Is.EqualTo("25.0"));            
+        }
+
+        [Test]
         public void GetLatestForNonExistantThingShouldNotThrowException()
         {
 
