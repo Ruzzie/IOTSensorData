@@ -59,7 +59,7 @@
                 };
 
                 window.swaggerUi = new SwaggerUi({
-                    url: swashbuckleConfig.rootUrl + "/" + swashbuckleConfig.discoveryPaths[0],
+                    url: swashbuckleConfig.rootUrl + swashbuckleConfig.discoveryPaths[0],
                     dom_id: "swagger-ui-container",
                     booleanValues: swashbuckleConfig.booleanValues,
                     onComplete: function (swaggerApi, swaggerUi) {
