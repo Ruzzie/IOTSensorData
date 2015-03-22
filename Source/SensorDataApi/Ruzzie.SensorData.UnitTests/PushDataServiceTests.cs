@@ -16,7 +16,7 @@ namespace Ruzzie.SensorData.UnitTests
         public void SetUp()
         {
             ISensorItemDataRepository repository =new  Moq.Mock<ISensorItemDataRepository>().Object;
-            _pushDataService = new PushDataService(new DataWriteServiceWithCache(new WriteThroughCacheLocal(), repository ));
+            _pushDataService = new PushDataService(new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository));
         }
 
 

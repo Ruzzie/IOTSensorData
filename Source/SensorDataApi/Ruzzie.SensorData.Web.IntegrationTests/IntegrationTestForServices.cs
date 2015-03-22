@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Dynamic;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.GetData;
@@ -18,7 +20,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
             IWriteThroughCache writeThroughRedisCache = new WriteThroughRedisCache(Container.RedisConnString);
             SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);
-            IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo );
+            IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache,writeThroughRedisCache, sensorItemDataRepositoryMongo );
             IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, writeThroughRedisCache,
                 sensorItemDataRepositoryMongo);
             IPushDataService pushDataService = new PushDataService(dataWriteService);
@@ -42,24 +44,24 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             IWriteThroughCache writeThroughCache = new WriteThroughCacheLocal();
             IWriteThroughCache writeThroughRedisCache = new WriteThroughRedisCache(Container.RedisConnString);
             SensorItemDataRepositoryMongo sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoDataRepositoryTests.ConnString);
-            IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache, sensorItemDataRepositoryMongo);
+            IDataWriteService dataWriteService = new DataWriteServiceWithCache(writeThroughCache,writeThroughRedisCache, sensorItemDataRepositoryMongo);
             IDataReadService dateReadService = new DataReadServiceWithCache(writeThroughCache, writeThroughRedisCache,
                 sensorItemDataRepositoryMongo);
             IPushDataService pushDataService = new PushDataService(dataWriteService);
             IGetDataService getDataService = new GetDataService(dateReadService);
 
             string thingName = Guid.NewGuid().ToString();
+            Debug.WriteLine(thingName);
             pushDataService.PushData(thingName, DateTime.Now,
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") });
 
             //Act            
             writeThroughCache.ResetLatestEntryCache();
             GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
-            
 
             //Assert
             Assert.That(getDataResult.ResultData, Is.Not.Null);
-            Assert.That(getDataResult.ResultData.Temperature, Is.EqualTo("25.0"));            
+            Assert.That(getDataResult.ResultData.Temperature.ToString(), Is.EqualTo("25.0"));            
         }
 
         [Test]

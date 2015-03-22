@@ -20,7 +20,7 @@ namespace Ruzzie.SensorData.Web
             var writeThroughCacheLocal = new WriteThroughCacheLocal();
             var writeThroughCacheRedis = new WriteThroughRedisCache(RedisConnString);
 
-            PushDataService = new PushDataService(new DataWriteServiceWithCache(writeThroughCacheLocal, sensorItemDataRepositoryMongo));
+            PushDataService = new PushDataService(new DataWriteServiceWithCache(writeThroughCacheLocal, writeThroughCacheRedis, sensorItemDataRepositoryMongo));
             
             GetDataService = new GetDataService(new DataReadServiceWithCache(writeThroughCacheLocal,writeThroughCacheRedis, sensorItemDataRepositoryMongo));
         }

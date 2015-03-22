@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
-using Jil;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
@@ -25,7 +24,7 @@ namespace Ruzzie.SensorData.Web.Repository
 
             if (writer.State == BsonWriterState.Value && value != null)
             {
-                BsonDocument document = BsonDocument.Parse(JSON.SerializeDynamic(value));
+                BsonDocument document = BsonDocument.Parse(Newtonsoft.Json.JsonConvert.SerializeObject(value));
                 BsonDocumentSerializer.Serialize(context, args, document);
             }
         }

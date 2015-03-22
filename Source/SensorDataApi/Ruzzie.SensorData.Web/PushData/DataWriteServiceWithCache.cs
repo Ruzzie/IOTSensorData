@@ -14,13 +14,15 @@ namespace Ruzzie.SensorData.Web.PushData
     {
         private readonly ISensorItemDataRepository _sensorItemDataRepositoryMongo;
 
-        public DataWriteServiceWithCache(IWriteThroughCache writeThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
+        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
         {
             _sensorItemDataRepositoryMongo = sensorItemDataRepositoryMongo;
-            WriteThroughCache = writeThroughCache;
+            TierOneWriteThroughCache = tierOneWriteThroughCache;
+            TierTwoWriteThroughCache = tierTwoWriteThroughCache;
         }
 
-        protected IWriteThroughCache WriteThroughCache { get; set; }
+        protected IWriteThroughCache TierOneWriteThroughCache { get; set; }
+        protected IWriteThroughCache TierTwoWriteThroughCache { get; set; }
 
         public async Task CreateOrUpdateDataForThing(string thingName, DateTime timeStamp, dynamic data)
         {
@@ -30,7 +32,7 @@ namespace Ruzzie.SensorData.Web.PushData
             dataDocument.Content = data;
 
             //1. store for real TODO:ERROR HANDLING!            
-            await Task.WhenAll(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument), WriteThroughCache.Update(dataDocument));
+            await Task.WhenAll(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument), Task.WhenAny(TierOneWriteThroughCache.Update(dataDocument), TierTwoWriteThroughCache.Update(dataDocument)));
         }
     }
 }

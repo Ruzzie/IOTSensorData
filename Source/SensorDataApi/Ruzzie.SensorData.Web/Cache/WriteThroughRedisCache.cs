@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Jil;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace Ruzzie.SensorData.Web.Cache
@@ -11,7 +11,6 @@ namespace Ruzzie.SensorData.Web.Cache
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly ConnectionMultiplexer _redis;
         private IDatabase _redisDatabase;
-        readonly Options _options = new Options(dateFormat:DateTimeFormat.ISO8601);
         TimeSpan _expireAfterTimeSpan = new TimeSpan(1,0,0,0);
 
 
@@ -47,7 +46,7 @@ namespace Ruzzie.SensorData.Web.Cache
                     new[]
                     {
                         new HashEntry("lastmodified", dataDocument.Created.Ticks),
-                        new HashEntry("document", JSON.SerializeDynamic(dataDocument, _options))
+                        new HashEntry("document", JsonConvert.SerializeObject(dataDocument))
                     });
                 await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan);
             }
@@ -69,16 +68,18 @@ namespace Ruzzie.SensorData.Web.Cache
         }
        
 
-        private async Task<SensorItemDataDocument> Deserialize(Task<RedisValue> stringGetAsync)
+        private async Task<SensorItemDataDocument> Deserialize(Task<RedisValue> getAsync)
         {
             return await Task.Run(async () =>
             {
-                string jsonString = await stringGetAsync;
-                if (!string.IsNullOrWhiteSpace(jsonString))
-                {                    
-                    return JSON.Deserialize<SensorItemDataDocument>(jsonString,_options);
+                string dataAsString = await getAsync;
+                
+                if (string.IsNullOrWhiteSpace(dataAsString))
+                {
+                    return null;
                 }
-                return null;
+
+                return  JsonConvert.DeserializeObject<SensorItemDataDocument>(dataAsString);
             });
         }        
 

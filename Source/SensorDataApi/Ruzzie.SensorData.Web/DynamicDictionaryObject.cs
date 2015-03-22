@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 
 namespace Ruzzie.SensorData.Web
-{
-    [Serializable]    
+{   
+    [Serializable]     
     public sealed class DynamicDictionaryObject : DynamicObject, IDictionary<string,object>
     {
         private readonly ConcurrentDictionary<string, dynamic> _internalMembers;
@@ -93,7 +93,7 @@ namespace Ruzzie.SensorData.Web
         public static implicit operator DynamicDictionaryObject(ExpandoObject expandoObject)
         {
             return  new DynamicDictionaryObject(expandoObject);            
-        }
+        }       
 
         IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
         {
@@ -103,6 +103,11 @@ namespace Ruzzie.SensorData.Web
         IEnumerator IEnumerable.GetEnumerator()
         {
             return InternalMembers.GetEnumerator();
+        }
+
+        public void Add(KeyValuePair<string, object> item)
+        {
+            CreateOrAddMember(item.Key, item.Value);
         }
 
         void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
