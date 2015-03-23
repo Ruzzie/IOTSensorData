@@ -11,7 +11,7 @@ namespace Ruzzie.SensorData.Web.Cache
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly ConnectionMultiplexer _redis;
         private IDatabase _redisDatabase;
-        TimeSpan _expireAfterTimeSpan = new TimeSpan(1,0,0,0);
+        TimeSpan _expireAfterTimeSpan = new TimeSpan(0,0,5,0);
 
 
         public WriteThroughRedisCache(string connString)
