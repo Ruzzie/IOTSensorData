@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Configuration;
 
 namespace Ruzzie.SensorData.Web.Repository
 {
@@ -17,8 +18,8 @@ namespace Ruzzie.SensorData.Web.Repository
         public SensorItemDataRepositoryMongo(string connectionstring)
         {
             var mongoClient = new MongoClient(connectionstring);
-
-            _mongoDatabase = mongoClient.GetDatabase("sensordatatestdb");
+            var str = new ConnectionString(connectionstring);
+            _mongoDatabase = mongoClient.GetDatabase(str.DatabaseName);
         }
 
         public IMongoCollection<SensorItemDataDocument> SensorItemDataCollection
