@@ -8,6 +8,9 @@ namespace Ruzzie.SensorData.Web.Cache
 {
     public class WriteThroughRedisCache : IWriteThroughCache
     {
+        private const string LastModifiedFieldName = "lastmodified";
+        private const string DocumentFieldName = "document";
+        private const string LatestItemKeyFormatString = "sensoritemdatadocument:latest:{0}";
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly ConnectionMultiplexer _redis;
         private IDatabase _redisDatabase;
@@ -38,15 +41,15 @@ namespace Ruzzie.SensorData.Web.Cache
                 //delete old key
             //else return current            
             string keyname = CreateKeyForLatestEntry(dataDocument);
-            RedisValue lastModified = await LatestEntryCache.HashGetAsync(keyname, "lastmodified");
+            RedisValue lastModified = await LatestEntryCache.HashGetAsync(keyname, LastModifiedFieldName);
             
             if (((long) lastModified) < dataDocument.Created.Ticks)
             {                
                 await LatestEntryCache.HashSetAsync(keyname,
                     new[]
                     {
-                        new HashEntry("lastmodified", dataDocument.Created.Ticks),
-                        new HashEntry("document", JsonConvert.SerializeObject(dataDocument))
+                        new HashEntry(LastModifiedFieldName, dataDocument.Created.Ticks),
+                        new HashEntry(DocumentFieldName, JsonConvert.SerializeObject(dataDocument))
                     });
                 await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan);
             }
@@ -57,14 +60,15 @@ namespace Ruzzie.SensorData.Web.Cache
         {
             return CreateKeyForLatestEntry(dataDocument.ThingName);
         }
+
         private RedisKey CreateKeyForLatestEntry(string thingName)
         {
-            return string.Format("sensoritemdatadocument:latest:{0}", thingName);
+            return string.Format(LatestItemKeyFormatString, thingName);
         }
 
         public async Task<SensorItemDataDocument> GetLatest(string thingName)
         {
-            return await Deserialize(LatestEntryCache.HashGetAsync(CreateKeyForLatestEntry(thingName),"document"));
+            return await Deserialize(LatestEntryCache.HashGetAsync(CreateKeyForLatestEntry(thingName),DocumentFieldName));
         }
        
 
