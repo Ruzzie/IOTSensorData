@@ -14,13 +14,13 @@ namespace Ruzzie.SensorData.Web.Cache
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly ConnectionMultiplexer _redis;
         private IDatabase _redisDatabase;
-        TimeSpan _expireAfterTimeSpan = new TimeSpan(0,0,5,0);
+        private TimeSpan _expireAfterTimeSpan = new TimeSpan(0, 0, 5, 0);
 
 
         public WriteThroughRedisCache(string connString)
         {
-            _redis = ConnectionMultiplexer.Connect(connString);            
-            _redis.PreserveAsyncOrder = false;            
+            _redis = ConnectionMultiplexer.Connect(connString);
+            _redis.PreserveAsyncOrder = false;
             LatestEntryCache = _redis.GetDatabase();
         }
 
@@ -30,30 +30,31 @@ namespace Ruzzie.SensorData.Web.Cache
             private set { _redisDatabase = value; }
         }
 
-        public async Task<SensorItemDataDocument> Update(SensorItemDataDocument dataDocument)
+        public async Task Update(SensorItemDataDocument dataDocument)
         {
             if (dataDocument == null)
             {
-                return await Task.FromResult<SensorItemDataDocument>(null);
+                return;
             }
-            //create byte[] for thingname + datetime to check if newer
+            //create data for thingname + datetime to check if newer
             //update if newer
-                //delete old key
+            //delete old key
             //else return current            
             string keyname = CreateKeyForLatestEntry(dataDocument);
             RedisValue lastModified = await LatestEntryCache.HashGetAsync(keyname, LastModifiedFieldName);
-            
+
             if (((long) lastModified) < dataDocument.Created.Ticks)
-            {                
-                await LatestEntryCache.HashSetAsync(keyname,
+            {
+                await LatestEntryCache.HashSetAsync(
+                    keyname,
                     new[]
                     {
                         new HashEntry(LastModifiedFieldName, dataDocument.Created.Ticks),
                         new HashEntry(DocumentFieldName, JsonConvert.SerializeObject(dataDocument))
-                    });
-                await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan);
+                    },
+                    CommandFlags.FireAndForget);
+                await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan,CommandFlags.FireAndForget);
             }
-            return await Task.FromResult(dataDocument);
         }
 
         private RedisKey CreateKeyForLatestEntry(SensorItemDataDocument dataDocument)
@@ -68,24 +69,24 @@ namespace Ruzzie.SensorData.Web.Cache
 
         public async Task<SensorItemDataDocument> GetLatest(string thingName)
         {
-            return await Deserialize(LatestEntryCache.HashGetAsync(CreateKeyForLatestEntry(thingName),DocumentFieldName));
+            return await Deserialize(LatestEntryCache.HashGetAsync(CreateKeyForLatestEntry(thingName), DocumentFieldName));
         }
-       
+
 
         private async Task<SensorItemDataDocument> Deserialize(Task<RedisValue> getAsync)
         {
             return await Task.Run(async () =>
             {
                 string dataAsString = await getAsync;
-                
+
                 if (string.IsNullOrWhiteSpace(dataAsString))
                 {
                     return null;
                 }
 
-                return  JsonConvert.DeserializeObject<SensorItemDataDocument>(dataAsString);
+                return JsonConvert.DeserializeObject<SensorItemDataDocument>(dataAsString);
             });
-        }        
+        }
 
         public Task<int> PruneOldestItemCacheForItemsOlderThan(TimeSpan age)
         {

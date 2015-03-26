@@ -94,12 +94,8 @@ namespace Ruzzie.SensorData.UnitTests
 
         [Test]
         public void MustNotStoreNullValue()
-        {
-            //Arrange                        
-            var returnedItem = Cache.Update(null);
-
-            //Act & Asset
-            Assert.That(returnedItem.Result, Is.EqualTo(null));
+        {            
+            Cache.Update(null);                        
         }
 
 

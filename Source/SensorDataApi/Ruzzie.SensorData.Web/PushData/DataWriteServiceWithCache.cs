@@ -32,7 +32,7 @@ namespace Ruzzie.SensorData.Web.PushData
             dataDocument.Content = data;
 
             //1. store for real TODO:ERROR HANDLING!            
-            await Task.WhenAll(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument), Task.WhenAny(TierOneWriteThroughCache.Update(dataDocument), TierTwoWriteThroughCache.Update(dataDocument)));
+            await Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument), Task.WhenAny(TierOneWriteThroughCache.Update(dataDocument), TierTwoWriteThroughCache.Update(dataDocument)));
         }
     }
 }
