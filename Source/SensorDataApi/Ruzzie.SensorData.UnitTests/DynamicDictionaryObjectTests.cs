@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -115,18 +114,7 @@ namespace Ruzzie.SensorData.UnitTests
             Assert.That(castedDynamicDic,Is.Not.Null);
 
 
-        }
-       
-        //Add data from a device sensor
-            //with identifier, value and datetime
-        //Get last data for a device sensor 
-        //Get all data for a device sensor sorted in time with maxtime
-        //Clear all data for a sensor
-        //query
-
-        //error response
-        //ok response
-        
+        }                    
     }
 
     
@@ -212,12 +200,21 @@ namespace Ruzzie.SensorData.UnitTests
             Assert.That((int) deserializedNestedContent.dataitemone["key"], Is.EqualTo(1));
 
         }
+       
 
         public abstract SensorItemDataDocument Deserialize(object serializedData);
 
 
-        public abstract object Serialize(SensorItemDataDocument doc);    
-    }   
+        public abstract object Serialize(SensorItemDataDocument doc);
+
+        public SensorItemDataDocument SerializeAndDeserialize(SensorItemDataDocument doc)
+        {
+            var data = Serialize(doc);
+            var deserializedDoc = Deserialize(data);
+            return deserializedDoc;
+        }
+    }
+   
 
     [TestFixture]
     public class NewtonSoftSerializationTests : SensorItemDataSerializationTestBase
@@ -232,81 +229,10 @@ namespace Ruzzie.SensorData.UnitTests
             return JsonConvert.SerializeObject(doc);
         }
     }
-    
-
-    [TestFixture][Ignore]
-    public class CustomSerializerTests : SensorItemDataSerializationTestBase
-    {
-        CustomSerializer _customSerializer = new CustomSerializer();
-
-        public override SensorItemDataDocument Deserialize(object serializedData)
-        {
-            return _customSerializer.Deserialize(serializedData as byte[]);
-        }
-
-        public override object Serialize(SensorItemDataDocument doc)
-        {
-            return _customSerializer.Serialize(doc);
-        }
-    }
-    
 
 
-    public class CustomSerializer
-    {
-        public byte[] Serialize(SensorItemDataDocument doc)
-        {
-            using (MemoryStream writeStream = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(writeStream))
-                {
+         
 
-                    //id
-                    writer.Write(doc.Id ?? string.Empty);                    
 
-                    //thingname
-                    writer.Write(doc.ThingName);
-
-                    //created
-                    long binaryDateTime = doc.Created.ToBinary();
-                    writer.Write(binaryDateTime);
-
-                    //Content
-                        //here the magic happens
-                    
-                    writer.Flush();
-
-                    return writeStream.GetBuffer();
-                }
-            }
-        }
-        
-        public SensorItemDataDocument Deserialize(byte[] data)
-        {
-            if (data == null || data.Length == 0)
-            {
-                throw new ArgumentException("data was null or empty.");
-            }
-
-            SensorItemDataDocument doc = new SensorItemDataDocument();
-            using (MemoryStream stream = new MemoryStream(data))
-            {
-                using (BinaryReader reader = new BinaryReader(stream))
-                {
-                    //id
-                    doc.Id = reader.ReadString();
-
-                    //thingname
-                    doc.ThingName = reader.ReadString();
-
-                    //created
-                    doc.Created = DateTime.FromBinary(reader.ReadInt64());
-
-                    //content
-
-                    return doc;
-                }
-            }
-        }
-    }
+   
 }
