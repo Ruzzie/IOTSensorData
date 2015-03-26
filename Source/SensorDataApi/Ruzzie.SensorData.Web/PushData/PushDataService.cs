@@ -80,36 +80,27 @@ namespace Ruzzie.SensorData.Web.PushData
                 result.PushDataResultCode = PushDataResultCode.FailedNoThingNameProvided;
                 return result;
             }            
-
-            //if (string.IsNullOrWhiteSpace(jsonContentString))
-            //{
-            //    result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
-            //    return result;
-            //}
-
-            //DynamicDictionaryObject contentObject;
-            //try
-            //{
-            //    contentObject = JsonConvert.DeserializeObject<DynamicDictionaryObject>(jsonContentString);
-            //}
-            //catch (Exception e)
-            //{
-            //    result.PushDataResultCode = PushDataResultCode.InvalidData;
-            //    result.ResultData = new DynamicDictionaryObject();
-            //    result.ResultData.ErrorMessage = e.Message;
-            //    return result;
-            //}
-
-            if (content == null || !content.GetDynamicMemberNames().Any())
+            
+            try
             {
-                result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
+                if (content == null || !content.GetDynamicMemberNames().Any())
+                {
+                    result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
+                    return result;
+                }
+
+                result.ResultData = content;
+
+                await DataWriteService.CreateOrUpdateDataForThing(thingName, result.TimeStamp, content);
                 return result;
             }
-
-            result.ResultData = content;
-
-            await DataWriteService.CreateOrUpdateDataForThing(thingName, result.TimeStamp, content);
-            return result;
+            catch (Exception e)
+            {
+                result.PushDataResultCode = PushDataResultCode.UnexpectedError;
+                result.ResultData = new DynamicDictionaryObject();
+                result.ResultData.ErrorMessage = e.Message;
+                return result;
+            }
         }
 
         private dynamic MapKeyValuePairsToDynamic(List<KeyValuePair<string, string>> keyValuePairs)

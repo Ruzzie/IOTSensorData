@@ -5,6 +5,7 @@
         Success,
         FailedEmptyData,
         FailedNoThingNameProvided,
-        InvalidData
+        InvalidData,
+        UnexpectedError
     }
 }
