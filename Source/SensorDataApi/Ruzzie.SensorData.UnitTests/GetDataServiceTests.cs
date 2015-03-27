@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web;
 using Ruzzie.SensorData.Web.GetData;
-using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.UnitTests
 {
@@ -13,7 +13,6 @@ namespace Ruzzie.SensorData.UnitTests
     {
         private IGetDataService _getDataService;
 
-
         [SetUp]
         public void SetUp()
         {
@@ -21,7 +20,7 @@ namespace Ruzzie.SensorData.UnitTests
             dataReadServiceFake.Setup(service => service.GetLatestEntryForThing("ThingNameTest"))
                 .Returns(Task.FromResult(new SensorItemDataDocument
                 {
-                    Content = new DynamicDictionaryObject(),
+                    Content = new DynamicDictionaryObject {new KeyValuePair<string, object>("MyValue",1)},
                     Created = DateTime.Now,
                     ThingName = "ThingNameTest"
                 }));
@@ -82,6 +81,6 @@ namespace Ruzzie.SensorData.UnitTests
 
             //Assert
             Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedNoThingNameProvided));
-        }
+        }      
     }
 }

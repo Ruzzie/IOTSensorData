@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using Microsoft.Owin.Testing;
 using NUnit.Framework;
@@ -103,6 +104,27 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         }
 
         [Test]
+        public void GetData_SingleValue_After_Push_Returns_PlainText()
+        {            
+            _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest6", new { Temperature = "35" }).Wait();
+
+            HttpClient httpClient = _server.HttpClient;
+            httpClient.DefaultRequestHeaders.Accept.Remove(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Accept.Remove(new MediaTypeWithQualityHeaderValue("text/javascript"));
+            httpClient.DefaultRequestHeaders.Accept.Remove(new MediaTypeWithQualityHeaderValue("text/json"));
+
+            HttpResponseMessage httpResponseMessage = httpClient.GetAsync("get/latest/singlevalue/for/IntTest6/Temperature").Result;
+
+            Assert.That(httpResponseMessage.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+            HttpContent httpContent = httpResponseMessage.Content;
+            var resultObject = httpContent.ReadAsStringAsync().Result;
+
+            
+            Assert.That(resultObject, Is.EqualTo("35"));            
+        }
+
+        [Test]
         public void GetData_For_Non_Existant_Thing_Should_Fail()
         {
             var response = _server.HttpClient.GetAsync("/get/latest/data/for/"+new Guid()).Result;
@@ -111,6 +133,8 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             Assert.That(resultObject.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNotFound));            
         }
+
+
 
 
     }
