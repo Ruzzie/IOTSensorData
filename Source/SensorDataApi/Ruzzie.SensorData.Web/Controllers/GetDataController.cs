@@ -27,7 +27,7 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// <summary>
         ///     Reads the single value for the latest entry for a thing.
         /// </summary>
-        /// <remarks> Use this if you do not want or cannot parse to get json.</remarks>
+        /// <remarks> Use this if you do not want or cannot parse json. This returns plain text.</remarks>
         /// <param name="thing">A unique name of a thing.</param>
         /// <param name="valueName">The name of the value stored in the content data to return.</param>
         /// <response code="404">Thing was not found or no thing name provided.</response>        
