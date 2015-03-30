@@ -13,9 +13,14 @@ namespace Ruzzie.SensorData.Web.Repository
 
     public class SensorItemDataRepositoryMongo : ISensorItemDataRepository
     {
-        private readonly IMongoDatabase _mongoDatabase;
+        private IMongoDatabase _mongoDatabase;
 
         public SensorItemDataRepositoryMongo(string connectionstring)
+        {
+            ConnectAndGetDatabase(connectionstring);
+        }
+
+        private void ConnectAndGetDatabase(string connectionstring)
         {
             var mongoClient = new MongoClient(connectionstring);
             var str = new ConnectionString(connectionstring);
