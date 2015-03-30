@@ -81,6 +81,46 @@ namespace Ruzzie.SensorData.UnitTests
 
             //Assert
             Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedNoThingNameProvided));
-        }      
+        }
+
+        [Test]
+        public async void GetSingleValueMustReturnSingleValueWhenPresent()
+        {
+            //Arrange
+            string thingName = "ThingNameTest";
+
+            //Act            
+            GetDataResult result = await _getDataService.GetLastestSingleValueForThing(thingName,"MyValue");
+
+            //Assert
+            Assert.That(result.ResultData, Is.EqualTo(1));
+        }
+
+
+        [Test]
+        public async void GetSingleValueMustReturnSingleValueNotProvided()
+        {
+            //Arrange
+            string thingName = "ThingNameTest";
+
+            //Act            
+            GetDataResult result = await _getDataService.GetLastestSingleValueForThing(thingName, "");
+
+            //Assert
+            Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.ValueNameNotProvided));
+        }
+
+        [Test]
+        public async void GetSingleValueMustReturnValueNotFoundWhenValueNameIsNotPresent()
+        {
+            //Arrange
+            string thingName = "ThingNameTest";
+
+            //Act            
+            GetDataResult result = await _getDataService.GetLastestSingleValueForThing(thingName, "MyValueDoesNotExist");
+
+            //Assert
+            Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.ValueNameNotFound));
+        }
     }
 }

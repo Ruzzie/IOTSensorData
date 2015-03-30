@@ -104,7 +104,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         }
 
         [Test]
-        public void GetData_SingleValue_After_Push_Returns_PlainText()
+        public void GetData_SingleValue_After_Push_Returns_PlainText_Value()
         {            
             _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest6", new { Temperature = "35" }).Wait();
 
@@ -122,6 +122,21 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             
             Assert.That(resultObject, Is.EqualTo("35"));            
+        }
+
+        [Test]
+        public void GetData_SingleValue_After_Push_Returns_404_When_SingleValueName_Does_Not_Exists()
+        {
+            _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest7", new { Temperature = "35" }).Wait();
+
+            HttpClient httpClient = _server.HttpClient;
+            httpClient.DefaultRequestHeaders.Accept.Remove(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Accept.Remove(new MediaTypeWithQualityHeaderValue("text/javascript"));
+            httpClient.DefaultRequestHeaders.Accept.Remove(new MediaTypeWithQualityHeaderValue("text/json"));
+
+            HttpResponseMessage httpResponseMessage = httpClient.GetAsync("get/latest/singlevalue/for/IntTest6/IDoNotExist").Result;
+
+            Assert.That(httpResponseMessage.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));                        
         }
 
         [Test]

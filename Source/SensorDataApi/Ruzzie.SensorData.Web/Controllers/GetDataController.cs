@@ -30,27 +30,27 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// <remarks> Use this if you do not want or cannot parse json. This returns plain text.</remarks>
         /// <param name="thing">A unique name of a thing.</param>
         /// <param name="valueName">The name of the value stored in the content data to return.</param>
-        /// <response code="404">Thing was not found or no thing name provided.</response>        
+        /// <response code="404">Thing or value was not found or no thing name provided.</response>        
         /// <returns><see cref="GetDataResult"/></returns>
         [Route("get/latest/singlevalue/for/{thing}/{valueName}")]
         public async Task<HttpResponseMessage> GetLatestSingleValue(string thing,string valueName)
         {            
             return await Task.Run(async () =>
-            {
+            {                
                 var response = new HttpResponseMessage(HttpStatusCode.OK);
 
-                GetDataResult getDataResult = await GetDataService.GetLastestDataEntryForThingAsync(thing);
+                GetDataResult getDataResult = await GetDataService.GetLastestSingleValueForThing(thing,valueName);
                 switch (getDataResult.GetDataResultCode)
                 {
-                    case GetDataResultCode.Success:
-                        response.Content = new StringContent(getDataResult.ResultData[valueName].ToString(),Encoding.UTF8); 
+                    case GetDataResultCode.Success:                        
+                        response.Content = new StringContent(getDataResult.ResultData.ToString(), Encoding.UTF8); 
                         response.StatusCode = HttpStatusCode.OK;
                         break;
-                    case GetDataResultCode.FailedNoThingNameProvided:
-                        response.StatusCode = HttpStatusCode.NotFound;                        
-                        break;
-                    case GetDataResultCode.FailedThingNotFound:
-                        response.StatusCode = HttpStatusCode.NotFound;                          
+                    case GetDataResultCode.FailedNoThingNameProvided:                                                
+                    case GetDataResultCode.FailedThingNotFound:                        
+                    case GetDataResultCode.ValueNameNotFound:
+                    case GetDataResultCode.ValueNameNotProvided:
+                        response.StatusCode = HttpStatusCode.NotFound;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -58,9 +58,7 @@ namespace Ruzzie.SensorData.Web.Controllers
 
                 return response;
             });
-        }
-
-       
+        }       
 
     }
 }

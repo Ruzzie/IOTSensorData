@@ -4,6 +4,8 @@
     {
         Success,
         FailedNoThingNameProvided,
-        FailedThingNotFound
+        FailedThingNotFound,
+        ValueNameNotFound,
+        ValueNameNotProvided
     }
 }

@@ -6,5 +6,6 @@ namespace Ruzzie.SensorData.Web.GetData
     {
         GetDataResult GetLastestDataEntryForThing(string thingName);
         Task<GetDataResult> GetLastestDataEntryForThingAsync(string thingName);
+        Task<GetDataResult> GetLastestSingleValueForThing(string thingName, string valueName);
     }
 }
