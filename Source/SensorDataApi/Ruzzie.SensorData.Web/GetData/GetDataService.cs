@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Ruzzie.SensorData.Web.GetData
@@ -11,14 +10,9 @@ namespace Ruzzie.SensorData.Web.GetData
             DataReadService = dataReadService;
         }
 
-        protected IDataReadService DataReadService { get; set; }
+        protected IDataReadService DataReadService { get; set; }      
 
-        public GetDataResult GetLastestDataEntryForThing(string thingName)
-        {
-            return GetLastestDataEntryForThingAsync(thingName).Result;
-        }
-
-        public async Task<GetDataResult> GetLastestDataEntryForThingAsync(string thingName)
+        public async Task<GetDataResult> GetLastestDataEntryForThing(string thingName)
         {
             var result = new GetDataResult {ThingName = thingName};
             if (string.IsNullOrWhiteSpace(thingName))
@@ -48,7 +42,7 @@ namespace Ruzzie.SensorData.Web.GetData
                 return new GetDataResult {GetDataResultCode = GetDataResultCode.ValueNameNotProvided};
             }
 
-            var result = await GetLastestDataEntryForThingAsync(thingName);
+            var result = await GetLastestDataEntryForThing(thingName);
             if (result.GetDataResultCode != GetDataResultCode.Success)
             {
                 return result;

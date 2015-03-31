@@ -5,17 +5,6 @@ using System.Threading.Tasks;
 
 namespace Ruzzie.SensorData.Web.PushData
 {
-    public interface IPushDataService
-    {
-        PushDataResult PushData(string thingName, DateTime currentDateTime, List<KeyValuePair<string, string>> keyValuePairs);
-        PushDataResult PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content);
-
-        Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime,
-            IEnumerable<KeyValuePair<string, string>> keyValuePairs);
-
-        Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime, DynamicDictionaryObject content);
-    }
-
     public class PushDataService : IPushDataService
     {
         public PushDataService(IDataWriteService dataWriteService)
@@ -24,18 +13,8 @@ namespace Ruzzie.SensorData.Web.PushData
         }
 
         protected IDataWriteService DataWriteService { get; set; }
-
-        public PushDataResult PushData(string thingName, DateTime currentDateTime, List<KeyValuePair<string, string>> keyValuePairs)
-        {
-            return PushDataAsync(thingName, currentDateTime, keyValuePairs).Result;
-        }
-
-        public PushDataResult PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
-        {
-            return PushDataAsync(thingName, currentDateTime, content).Result;
-        }
-
-        public async Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime,
+        
+        public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime,
             IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
             var result = new PushDataResult {TimeStamp = currentDateTime};
@@ -70,7 +49,7 @@ namespace Ruzzie.SensorData.Web.PushData
             return result;
         }
 
-        public async Task<PushDataResult> PushDataAsync(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
+        public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
         {
             var result = new PushDataResult {TimeStamp = currentDateTime};
             result.ThingName = thingName;

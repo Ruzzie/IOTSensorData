@@ -31,7 +31,7 @@ namespace Ruzzie.SensorData.UnitTests
                 string thingName = "MyTestThing";
 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, nameValuePairs);
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, nameValuePairs).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.Success));
@@ -41,7 +41,7 @@ namespace Ruzzie.SensorData.UnitTests
             public void ReturnFailedDataIsEmptyWhenNoDataIsPushed()
             {
                 //Act
-                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, new List<KeyValuePair<string, string>>());
+                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, new List<KeyValuePair<string, string>>()).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedEmptyData));
@@ -53,7 +53,7 @@ namespace Ruzzie.SensorData.UnitTests
                 List<KeyValuePair<string, string>> nameValuePairs = null;
                 //Act
 // ReSharper disable once ExpressionIsAlwaysNull
-                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, nameValuePairs);
+                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, nameValuePairs).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedEmptyData));
@@ -66,7 +66,7 @@ namespace Ruzzie.SensorData.UnitTests
             public void ReturnFailedNoThingNameWhenThingNameIsNullOrEmpty(string thingName)
             {
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") });
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") }).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedNoThingNameProvided));
@@ -80,7 +80,7 @@ namespace Ruzzie.SensorData.UnitTests
                 string thingName = "MyTestThing";
 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, nameValuePairs);
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, nameValuePairs).Result;
 
                 //Assert
                 Assert.That(result.ResultData.Temperature, Is.EqualTo("22.3"));
@@ -94,7 +94,7 @@ namespace Ruzzie.SensorData.UnitTests
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData("Test", currentDateTime, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") });
+                PushDataResult result = _pushDataService.PushData("Test", currentDateTime, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") }).Result;
 
                 //Assert
                 Assert.That(result.TimeStamp, Is.EqualTo(currentDateTime));
@@ -107,7 +107,7 @@ namespace Ruzzie.SensorData.UnitTests
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData("TestName", currentDateTime, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") });
+                PushDataResult result = _pushDataService.PushData("TestName", currentDateTime, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") }).Result;
 
                 //Assert
                 Assert.That(result.ThingName, Is.EqualTo("TestName"));
@@ -127,7 +127,7 @@ namespace Ruzzie.SensorData.UnitTests
                 string thingName = "MyTestThing";
 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, content);
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.Success));
@@ -139,7 +139,7 @@ namespace Ruzzie.SensorData.UnitTests
             public void ReturnFailedDataIsNullWhenNoDataIsPushed()
             {
                 //Act
-                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, null as DynamicDictionaryObject);
+                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, null as DynamicDictionaryObject).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedEmptyData));
@@ -156,7 +156,7 @@ namespace Ruzzie.SensorData.UnitTests
                 content.Temperature = "22.3";
                 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, content);
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedNoThingNameProvided));
@@ -173,7 +173,7 @@ namespace Ruzzie.SensorData.UnitTests
                 string thingName = "MyTestThing";
 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, content);
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.ResultData.Temperature, Is.EqualTo("22.3"));
@@ -190,7 +190,7 @@ namespace Ruzzie.SensorData.UnitTests
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData("Test", currentDateTime, content);
+                PushDataResult result = _pushDataService.PushData((string) "Test", currentDateTime, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.TimeStamp, Is.EqualTo(currentDateTime));
@@ -205,7 +205,7 @@ namespace Ruzzie.SensorData.UnitTests
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData("TestName", currentDateTime, content);
+                PushDataResult result = _pushDataService.PushData((string) "TestName", currentDateTime, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.ThingName, Is.EqualTo("TestName"));

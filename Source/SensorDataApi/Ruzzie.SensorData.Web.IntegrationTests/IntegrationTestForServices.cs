@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.GetData;
@@ -30,8 +29,8 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             //Act
             pushDataService.PushData(thingName, DateTime.Now,
-                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") });
-            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
+            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(getDataResult.ResultData.Temperature, Is.EqualTo("25.0"));
@@ -53,11 +52,11 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             string thingName = Guid.NewGuid().ToString();
             Debug.WriteLine(thingName);
             pushDataService.PushData(thingName, DateTime.Now,
-                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") });
+                new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
 
             //Act            
             writeThroughCache.ResetLatestEntryCache();
-            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
+            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(getDataResult.ResultData, Is.Not.Null);
@@ -78,7 +77,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             string thingName = Guid.NewGuid().ToString();
 
             //Act            
-            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName);
+            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(getDataResult.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNotFound));

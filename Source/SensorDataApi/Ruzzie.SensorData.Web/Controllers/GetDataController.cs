@@ -21,7 +21,7 @@ namespace Ruzzie.SensorData.Web.Controllers
         [Route("get/latest/data/for/{thing}")]
         public async Task<GetDataResult> GetLatest(string thing)
         {
-            return await GetDataService.GetLastestDataEntryForThingAsync(thing);
+            return await GetDataService.GetLastestDataEntryForThing(thing);
         }
 
         /// <summary>

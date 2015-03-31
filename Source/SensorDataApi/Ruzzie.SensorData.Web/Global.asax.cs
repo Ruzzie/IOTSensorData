@@ -13,6 +13,7 @@ namespace Ruzzie.SensorData.Web
         {
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             GlobalConfiguration.Configuration.EnsureInitialized();
+            Container.PruneLocalCacheJob.Start();
         }
 
         protected void Application_PreSendRequestHeaders(object sender, EventArgs e)
