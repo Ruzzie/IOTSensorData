@@ -39,10 +39,14 @@ namespace Ruzzie.SensorData.Web.PushData
             dataDocument.Created = timeStamp;
             dataDocument.Content = data;
 
-            Task.Run(() => UpdateUpdateSensorDocumentMessageChannel.Publish(thingName));
-
+          
             //1. store for real TODO:ERROR HANDLING!            
-            await Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument), Task.WhenAny(TierOneWriteThroughCache.Update(dataDocument), TierTwoWriteThroughCache.Update(dataDocument)));
+            await
+                Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument),
+                    Task.WhenAny(TierOneWriteThroughCache.Update(dataDocument),
+                        TierTwoWriteThroughCache.Update(dataDocument)
+                            .ContinueWith(task => UpdateUpdateSensorDocumentMessageChannel.Publish(thingName)))
+                    );
         }
     }
 }

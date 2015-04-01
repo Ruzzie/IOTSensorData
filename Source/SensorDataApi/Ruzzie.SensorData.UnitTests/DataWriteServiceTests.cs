@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web;
 using Ruzzie.SensorData.Web.Cache;
@@ -19,7 +20,7 @@ namespace Ruzzie.SensorData.UnitTests
 
             StubUpdateSensorDocumentMessageChannel updateUpdateSensorDocumentMessageChannel = new StubUpdateSensorDocumentMessageChannel();
             string lastMessage = string.Empty;
-            updateUpdateSensorDocumentMessageChannel.Subscribe(message => lastMessage = message);
+            updateUpdateSensorDocumentMessageChannel.Subscribe(message => lastMessage = message).Wait();
             IDataWriteService dataWriteService = new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository, updateUpdateSensorDocumentMessageChannel);
 
             string thingName = Guid.NewGuid().ToString();
@@ -40,14 +41,16 @@ namespace Ruzzie.SensorData.UnitTests
         //only supports one subscription per channel for test purposes
         Dictionary<string,Action<string>> _subscriptions  = new Dictionary<string, Action<string>>();
 
-        public void Subscribe(Action<string> callBack)
+        public async Task Subscribe(Action<string> callBack)
         {
-            _subscriptions[MessageChannelNames.UpdateLatestThingNotifications] = callBack;
+            await Task.Run(() =>
+                _subscriptions[MessageChannelNames.UpdateLatestThingNotifications] = callBack);
+
         }
 
-        public void Publish(string message)
+        public async Task Publish(string message)
         {
-            _subscriptions[MessageChannelNames.UpdateLatestThingNotifications].Invoke(message);
+            await Task.Run(()=>_subscriptions[MessageChannelNames.UpdateLatestThingNotifications].Invoke(message));
         }
     }
 }

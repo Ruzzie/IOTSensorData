@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Ruzzie.SensorData.Web
 {
     public interface IUpdateSensorDocumentMessageChannel
     {
-        void Publish(string message);
-        void Subscribe(Action<string> callBack);
+        Task Publish(string message);
+        Task Subscribe(Action<string> callBack);
     }
 }

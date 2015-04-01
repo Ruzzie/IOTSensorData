@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.Web.Cache
 {
@@ -36,10 +35,10 @@ namespace Ruzzie.SensorData.Web.Cache
             updateSensorDocumentMessageChannel.Subscribe(LatestThingIsUpdatedNotification);
         }
 
-        private void LatestThingIsUpdatedNotification(string message)
+        private void LatestThingIsUpdatedNotification(string thingName)
         {
             SensorItemDataDocument document;
-            LatestEntryCache.TryRemove(message, out document);
+            LatestEntryCache.TryRemove(thingName, out document);
         }
 
         public async Task Update(SensorItemDataDocument dataDocument)
@@ -88,7 +87,6 @@ namespace Ruzzie.SensorData.Web.Cache
         {
             LatestEntryCache.Clear();
         }
-
 
         private async Task<int> RemoveItems(ParallelQuery<string> itemsToPrune)
         {

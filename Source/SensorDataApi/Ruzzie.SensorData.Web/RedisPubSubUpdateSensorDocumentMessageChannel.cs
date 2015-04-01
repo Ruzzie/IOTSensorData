@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Ruzzie.SensorData.Web.Cache;
 using StackExchange.Redis;
 
@@ -16,16 +17,16 @@ namespace Ruzzie.SensorData.Web
 
         public string SenderId { get; protected set; }
 
-        public void Publish(string thingName)
+        public async Task Publish(string thingName)
         {
             string message =  new UpdateSensorDocumentMessage(SenderId,thingName).ToString();
 
-            _subscriber.Publish(MessageChannelNames.UpdateLatestThingNotifications, message, CommandFlags.FireAndForget);
+            await _subscriber.PublishAsync(MessageChannelNames.UpdateLatestThingNotifications, message, CommandFlags.FireAndForget);
         }
 
-        public void Subscribe(Action<string> callBack)
+        public async Task Subscribe(Action<string> callBack)
         {
-            _subscriber.Subscribe(MessageChannelNames.UpdateLatestThingNotifications, (channel, value) =>
+            await _subscriber.SubscribeAsync(MessageChannelNames.UpdateLatestThingNotifications, (channel, value) =>
             {
                 UpdateSensorDocumentMessage message = UpdateSensorDocumentMessage.FromString(value);
                 if (message.SenderId != SenderId)
