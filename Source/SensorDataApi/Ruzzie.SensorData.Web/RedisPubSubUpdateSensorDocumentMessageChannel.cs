@@ -30,7 +30,7 @@ namespace Ruzzie.SensorData.Web
                 UpdateSensorDocumentMessage message = UpdateSensorDocumentMessage.FromString(value);
                 if (message.SenderId != SenderId)
                 {
-                    callBack.Invoke(value);
+                    callBack.Invoke(message.ThingName);
                 }
             });
         }                

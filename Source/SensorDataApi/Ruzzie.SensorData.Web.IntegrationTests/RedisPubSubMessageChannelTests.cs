@@ -17,7 +17,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             channelOne.Publish("SmokeTest1");
             Thread.Sleep(100);
 
-            Assert.That(latestMessage, Contains.Substring("SmokeTest1"));
+            Assert.That(latestMessage, Is.EqualTo("SmokeTest1"));
         }
     }
 }
