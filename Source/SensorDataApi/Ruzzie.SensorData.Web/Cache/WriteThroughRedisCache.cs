@@ -50,8 +50,7 @@ namespace Ruzzie.SensorData.Web.Cache
                     {
                         new HashEntry(LastModifiedFieldName, dataDocument.Created.Ticks),
                         new HashEntry(DocumentFieldName, JsonConvert.SerializeObject(dataDocument))
-                    },
-                    CommandFlags.FireAndForget);
+                    });
                 await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan,CommandFlags.FireAndForget);
             }
         }
