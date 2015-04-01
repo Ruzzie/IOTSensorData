@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.Repository;
-using StackExchange.Redis;
 
 namespace Ruzzie.SensorData.Web.PushData
 {
@@ -13,6 +12,7 @@ namespace Ruzzie.SensorData.Web.PushData
 
     public class DataWriteServiceWithCache : IDataWriteService
     {
+        
         private readonly ISensorItemDataRepository _sensorItemDataRepositoryMongo;
 
         public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
@@ -22,8 +22,15 @@ namespace Ruzzie.SensorData.Web.PushData
             TierTwoWriteThroughCache = tierTwoWriteThroughCache;            
         }
 
+        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo, IUpdateSensorDocumentMessageChannel updateUpdateSensorDocumentMessageChannel)
+            : this(tierOneWriteThroughCache, tierTwoWriteThroughCache, sensorItemDataRepositoryMongo)
+        {
+            UpdateUpdateSensorDocumentMessageChannel = updateUpdateSensorDocumentMessageChannel;            
+        }
+
         protected IWriteThroughCache TierOneWriteThroughCache { get; set; }
         protected IWriteThroughCache TierTwoWriteThroughCache { get; set; }
+        protected IUpdateSensorDocumentMessageChannel UpdateUpdateSensorDocumentMessageChannel { get; set; }
 
         public async Task CreateOrUpdateDataForThing(string thingName, DateTime timeStamp, dynamic data)
         {
@@ -31,6 +38,8 @@ namespace Ruzzie.SensorData.Web.PushData
             dataDocument.ThingName = thingName;
             dataDocument.Created = timeStamp;
             dataDocument.Content = data;
+
+            Task.Run(() => UpdateUpdateSensorDocumentMessageChannel.Publish(thingName));
 
             //1. store for real TODO:ERROR HANDLING!            
             await Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument), Task.WhenAny(TierOneWriteThroughCache.Update(dataDocument), TierTwoWriteThroughCache.Update(dataDocument)));

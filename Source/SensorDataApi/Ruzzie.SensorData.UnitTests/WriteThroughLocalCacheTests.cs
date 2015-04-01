@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -10,9 +11,29 @@ namespace Ruzzie.SensorData.UnitTests
 
     [TestFixture]
     public class LocalWriteThroughCacheTests : WriteThroughCacheTestBase{
+        
+        private static StubUpdateSensorDocumentMessageChannel _stubUpdateSensorDocumentMessageChannel = new StubUpdateSensorDocumentMessageChannel();
 
-        public LocalWriteThroughCacheTests(): base(new WriteThroughCacheLocal())
+        public LocalWriteThroughCacheTests():base(new WriteThroughCacheLocal(_stubUpdateSensorDocumentMessageChannel))
+        {            
+            
+        }
+                
+        [Test]
+        public void ItemShouldBeExpiredWhenUpdateMessageReceived()
         {
+            //Arrange
+            
+            SensorItemDataDocument document = new SensorItemDataDocument();
+            document.ThingName = "ExpireThing";
+            document.Created = DateTime.Now;
+            document.Content = new DynamicDictionaryObject();
+            Cache.Update(document).Wait();
+
+            _stubUpdateSensorDocumentMessageChannel.Publish(document.ThingName);
+            Thread.Sleep(1);
+
+            Assert.That(Cache.GetLatest(document.ThingName).Result,Is.EqualTo(null));
         }
 
         [Test]

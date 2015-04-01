@@ -15,10 +15,9 @@ namespace Ruzzie.SensorData.UnitTests
         [SetUp]
         public void SetUp()
         {
-            ISensorItemDataRepository repository =new  Moq.Mock<ISensorItemDataRepository>().Object;
+            ISensorItemDataRepository repository = new Moq.Mock<ISensorItemDataRepository>().Object;
             _pushDataService = new PushDataService(new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository));
         }
-
 
         [TestFixture]
         class PushDataWithKeyValuePairs : PushDataServiceTests
@@ -190,7 +189,7 @@ namespace Ruzzie.SensorData.UnitTests
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData((string) "Test", currentDateTime, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData("Test", currentDateTime, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.TimeStamp, Is.EqualTo(currentDateTime));
@@ -205,7 +204,7 @@ namespace Ruzzie.SensorData.UnitTests
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData((string) "TestName", currentDateTime, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData("TestName", currentDateTime, (DynamicDictionaryObject) content).Result;
 
                 //Assert
                 Assert.That(result.ThingName, Is.EqualTo("TestName"));

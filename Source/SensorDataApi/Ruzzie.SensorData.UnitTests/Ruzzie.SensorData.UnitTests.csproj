@@ -46,6 +46,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataWriteServiceTests.cs" />
     <Compile Include="DynamicDictionaryObjectTests.cs" />
     <Compile Include="GetDataServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

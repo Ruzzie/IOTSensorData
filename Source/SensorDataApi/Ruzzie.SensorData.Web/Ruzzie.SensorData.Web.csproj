@@ -130,6 +130,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Cache\IWriteThroughCache.cs" />
+    <Compile Include="Cache\MessageChannelNames.cs" />
     <Compile Include="Cache\WriteThroughCacheLocal.cs" />
     <Compile Include="Cache\WriteThroughRedisCache.cs" />
     <Compile Include="Container.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="IUpdateSensorDocumentMessageChannel.cs" />
     <Compile Include="IWebJob.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="PushData\PushDataResult.cs" />
     <Compile Include="PushData\PushDataResultCode.cs" />
     <Compile Include="PushData\PushDataService.cs" />
+    <Compile Include="RedisPubSubUpdateSensorDocumentMessageChannel.cs" />
     <Compile Include="Repository\DynamicDictionaryObjectSerializer.cs" />
     <Compile Include="Repository\MongoClassMapBootstrap.cs" />
     <Compile Include="SensorItemDataDocument.cs" />

@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.Web.Cache
 {
     public class WriteThroughCacheLocal : IWriteThroughCache
     {
+        private readonly IUpdateSensorDocumentMessageChannel _updateSensorDocumentMessageChannel;
         private static readonly ConcurrentDictionary<string, SensorItemDataDocument> LatestEntryCache;
         private static readonly TimeSpan DefaultCacheDurationForLatestItems = new TimeSpan(0, 4, 0, 0, 0);
         private static readonly TimeSpan DefaultPruneInterval = new TimeSpan(0, 0, 0, 5, 0);
@@ -21,6 +23,23 @@ namespace Ruzzie.SensorData.Web.Cache
         {
             //create level one cache 
             LatestEntryCache = new ConcurrentDictionary<string, SensorItemDataDocument>(StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        public WriteThroughCacheLocal()
+        {
+            
+        }
+
+        public WriteThroughCacheLocal(IUpdateSensorDocumentMessageChannel updateSensorDocumentMessageChannel)
+        {
+            _updateSensorDocumentMessageChannel = updateSensorDocumentMessageChannel;
+            updateSensorDocumentMessageChannel.Subscribe(LatestThingIsUpdatedNotification);
+        }
+
+        private void LatestThingIsUpdatedNotification(string message)
+        {
+            SensorItemDataDocument document;
+            LatestEntryCache.TryRemove(message, out document);
         }
 
         public async Task Update(SensorItemDataDocument dataDocument)
