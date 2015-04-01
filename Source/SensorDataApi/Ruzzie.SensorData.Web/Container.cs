@@ -5,6 +5,7 @@ using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.GetData;
 using Ruzzie.SensorData.Web.PushData;
 using Ruzzie.SensorData.Web.Repository;
+using StackExchange.Redis;
 
 namespace Ruzzie.SensorData.Web
 {
@@ -18,20 +19,34 @@ namespace Ruzzie.SensorData.Web
             MongoClassMapBootstrap.Register();
             MongoConnString = ConfigurationManager.AppSettings["mongodbconnectionstring"];
             RedisConnString = ConfigurationManager.AppSettings["redisconnectionstring"];
+
+
+            var redis = CreateRedisConnectionMultiplexer();
+
             ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoConnString);
-            var writeThroughCacheLocal = new WriteThroughCacheLocal();
-            var writeThroughCacheRedis = new WriteThroughRedisCache(RedisConnString);
+            WriteThroughLocalCache = new WriteThroughCacheLocal();
+            RedisWriteThroughCache = new WriteThroughRedisCache(redis);
 
             TimeSpan localCacheExpiry = new TimeSpan(0,0,5,0);
-            PruneLocalCacheJob = new WebJob(localCacheExpiry, ()=> writeThroughCacheLocal.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry), HttpRuntime.Cache ?? new System.Web.Caching.Cache());
+            PruneLocalCacheJob = new WebJob(localCacheExpiry, () => WriteThroughLocalCache.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry), HttpRuntime.Cache ?? new System.Web.Caching.Cache());
 
-            PushDataService = new PushDataService(new DataWriteServiceWithCache(writeThroughCacheLocal, writeThroughCacheRedis, sensorItemDataRepositoryMongo));
-            
-            GetDataService = new GetDataService(new DataReadServiceWithCache(writeThroughCacheLocal,writeThroughCacheRedis, sensorItemDataRepositoryMongo));
+            PushDataService = new PushDataService(new DataWriteServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo));
+
+            GetDataService = new GetDataService(new DataReadServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo));
+        }
+
+        private static ConnectionMultiplexer CreateRedisConnectionMultiplexer()
+        {
+            var redis = ConnectionMultiplexer.Connect(RedisConnString);
+            redis.PreserveAsyncOrder = false;
+            return redis;
         }
 
         public static IPushDataService PushDataService { get; private set; }
         public static IGetDataService GetDataService { get; private set; }
+
+        public static IWriteThroughCache RedisWriteThroughCache { get; private set; }
+        public static IWriteThroughCache WriteThroughLocalCache { get; private set; }
 
         public static WebJob PruneLocalCacheJob { get; private set; }
     }

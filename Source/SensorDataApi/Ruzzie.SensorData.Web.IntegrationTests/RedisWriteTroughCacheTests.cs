@@ -7,7 +7,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
     [TestFixture]
     public class RedisWriteTroughCacheTests : WriteThroughCacheTestBase
     {
-        public RedisWriteTroughCacheTests() : base(new WriteThroughRedisCache(Container.RedisConnString))
+        public RedisWriteTroughCacheTests() : base(Container.RedisWriteThroughCache)
         {
         }
 

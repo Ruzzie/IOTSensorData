@@ -17,10 +17,9 @@ namespace Ruzzie.SensorData.Web.Cache
         private TimeSpan _expireAfterTimeSpan = new TimeSpan(0, 0, 5, 0);
 
 
-        public WriteThroughRedisCache(string connString)
+        public WriteThroughRedisCache(ConnectionMultiplexer redis)
         {
-            _redis = ConnectionMultiplexer.Connect(connString);
-            _redis.PreserveAsyncOrder = false;
+            _redis = redis;
             LatestEntryCache = _redis.GetDatabase();
         }
 
