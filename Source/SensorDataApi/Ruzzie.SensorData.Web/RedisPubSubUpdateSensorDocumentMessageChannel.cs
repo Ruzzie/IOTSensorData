@@ -19,7 +19,7 @@ namespace Ruzzie.SensorData.Web
 
         public async Task Publish(string thingName)
         {
-            string message =  new UpdateSensorDocumentMessage(SenderId,thingName).ToString();
+            string message =  UpdateSensorDocumentMessage.CreateMessage(SenderId,thingName);
 
             await _subscriber.PublishAsync(MessageChannelNames.UpdateLatestThingNotifications, message, CommandFlags.FireAndForget);
         }
@@ -39,6 +39,7 @@ namespace Ruzzie.SensorData.Web
 
     public class UpdateSensorDocumentMessage
     {
+        private const string Format = "{0};;;{1}";
         public string ThingName { get; set; }
         public string SenderId { get; set; }
 
@@ -64,9 +65,14 @@ namespace Ruzzie.SensorData.Web
             return new UpdateSensorDocumentMessage(strings[0],strings[1]);
         }
 
+        public static string CreateMessage(string senderId, string thingName)
+        {
+            return string.Format(Format, senderId, thingName);
+        }
+
         public override string ToString()
         {
-            return string.Format("{0};;;{1}", SenderId, ThingName);
+            return CreateMessage(SenderId, ThingName);
         }
     }
     

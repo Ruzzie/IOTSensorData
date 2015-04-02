@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web;
@@ -30,6 +31,8 @@ namespace Ruzzie.SensorData.UnitTests
 
             //Act
             dataWriteService.CreateOrUpdateDataForThing(thingName, timeStamp, data);
+
+            Thread.Sleep(1);
 
             //Assert
             Assert.That(lastMessage,Is.EqualTo(thingName));
