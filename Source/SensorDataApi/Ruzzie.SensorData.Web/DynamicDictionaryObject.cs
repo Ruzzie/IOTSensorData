@@ -140,6 +140,11 @@ namespace Ruzzie.SensorData.Web
             get { return InternalMembers.Count; }
         }
 
+        public int MemberCount
+        {
+            get { return InternalMembers.Count; }
+        }
+
         bool ICollection<KeyValuePair<string, object>>.IsReadOnly
         {
             get { return (InternalMembers as ICollection<KeyValuePair<string, dynamic>>).IsReadOnly; }

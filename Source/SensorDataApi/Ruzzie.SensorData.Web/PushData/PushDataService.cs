@@ -51,8 +51,7 @@ namespace Ruzzie.SensorData.Web.PushData
 
         public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
         {
-            var result = new PushDataResult {TimeStamp = currentDateTime};
-            result.ThingName = thingName;
+            var result = new PushDataResult {TimeStamp = currentDateTime, ThingName = thingName};
 
             if (string.IsNullOrWhiteSpace(thingName))
             {
@@ -62,7 +61,7 @@ namespace Ruzzie.SensorData.Web.PushData
             
             try
             {
-                if (content == null || !content.GetDynamicMemberNames().Any())
+                if (content == null || content.MemberCount == 0)
                 {
                     result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
                     return result;
@@ -82,7 +81,7 @@ namespace Ruzzie.SensorData.Web.PushData
             }
         }
 
-        private dynamic MapKeyValuePairsToDynamic(List<KeyValuePair<string, string>> keyValuePairs)
+        private static dynamic MapKeyValuePairsToDynamic(List<KeyValuePair<string, string>> keyValuePairs)
         {
             dynamic result = new DynamicDictionaryObject();
             for (int i = 0; i < keyValuePairs.Count; i++)
