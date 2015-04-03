@@ -30,7 +30,7 @@ namespace Ruzzie.SensorData.UnitTests
             document.Content = new DynamicDictionaryObject();
             Cache.Update(document).Wait();
 
-            _stubUpdateSensorDocumentMessageChannel.Publish(document.ThingName);
+            _stubUpdateSensorDocumentMessageChannel.Publish(document.ThingName).Wait();
             Thread.Sleep(1);
 
             Assert.That(Cache.GetLatest(document.ThingName).Result,Is.EqualTo(null));
