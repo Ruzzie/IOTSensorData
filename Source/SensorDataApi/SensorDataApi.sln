@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.22609.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ruzzie.SensorData.UnitTests", "Ruzzie.SensorData.UnitTests\Ruzzie.SensorData.UnitTests.csproj", "{A8C86891-3AE4-46E3-8651-B12BDA190C8F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ruzzie.SensorData.Web", "Ruzzie.SensorData.Web\Ruzzie.SensorData.Web.csproj", "{D95F5DE0-7648-439E-AAE7-9A7665555BF9}"
