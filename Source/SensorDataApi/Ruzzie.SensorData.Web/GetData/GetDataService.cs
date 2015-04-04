@@ -12,12 +12,12 @@ namespace Ruzzie.SensorData.Web.GetData
 
         protected IDataReadService DataReadService { get; set; }      
 
-        public async Task<GetDataResult> GetLastestDataEntryForThing(string thingName)
+        public async Task<GetDataResult> GetLatestDataEntryForThing(string thingName)
         {
             var result = new GetDataResult {ThingName = thingName};
             if (string.IsNullOrWhiteSpace(thingName))
             {
-                result.GetDataResultCode = GetDataResultCode.FailedNoThingNameProvided;
+                result.GetDataResultCode = GetDataResultCode.FailedThingNameNotProvided;
                 return result;                
             }
 
@@ -35,14 +35,14 @@ namespace Ruzzie.SensorData.Web.GetData
             return result;
         }
 
-        public async Task<GetDataResult> GetLastestSingleValueForThing(string thingName, string valueName)
+        public async Task<GetDataResult> GetLatestSingleValueForThing(string thingName, string valueName)
         {
             if (string.IsNullOrWhiteSpace(valueName))
             {
                 return new GetDataResult {GetDataResultCode = GetDataResultCode.ValueNameNotProvided};
             }
 
-            var result = await GetLastestDataEntryForThing(thingName);
+            var result = await GetLatestDataEntryForThing(thingName);
             if (result.GetDataResultCode != GetDataResultCode.Success)
             {
                 return result;

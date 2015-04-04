@@ -68,7 +68,7 @@ namespace Ruzzie.SensorData.UnitTests
                 PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") }).Result;
 
                 //Assert
-                Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedNoThingNameProvided));
+                Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedThingNameNotProvided));
             }
 
             [Test]
@@ -96,7 +96,7 @@ namespace Ruzzie.SensorData.UnitTests
                 PushDataResult result = _pushDataService.PushData("Test", currentDateTime, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "22.3") }).Result;
 
                 //Assert
-                Assert.That(result.TimeStamp, Is.EqualTo(currentDateTime));
+                Assert.That(result.Timestamp, Is.EqualTo(currentDateTime));
             }
 
             [Test]
@@ -121,12 +121,12 @@ namespace Ruzzie.SensorData.UnitTests
             public void SmokeTest()
             {
                 //Arrange
-                dynamic content = new DynamicDictionaryObject();
+                dynamic content = new DynamicObjectDictionary();
                 content.Temperature = "22.3";
                 string thingName = "MyTestThing";
 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicObjectDictionary) content).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.Success));
@@ -138,7 +138,7 @@ namespace Ruzzie.SensorData.UnitTests
             public void ReturnFailedDataIsNullWhenNoDataIsPushed()
             {
                 //Act
-                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, null as DynamicDictionaryObject).Result;
+                PushDataResult result = _pushDataService.PushData("EmptyDataForThing", DateTime.Now, null as DynamicObjectDictionary).Result;
 
                 //Assert
                 Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedEmptyData));
@@ -151,28 +151,28 @@ namespace Ruzzie.SensorData.UnitTests
             public void ReturnFailedNoThingNameWhenThingNameIsNullOrEmpty(string thingName)
             {                
                 //Arrange
-                dynamic content = new DynamicDictionaryObject();
+                dynamic content = new DynamicObjectDictionary();
                 content.Temperature = "22.3";
                 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicObjectDictionary) content).Result;
 
                 //Assert
-                Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedNoThingNameProvided));
+                Assert.That(result.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedThingNameNotProvided));
             }
 
             [Test]
             public void BuildValidDataObjectFromValidObject()
             {                
                 //Arrange
-                dynamic content = new DynamicDictionaryObject();
+                dynamic content = new DynamicObjectDictionary();
                 content.Temperature = "22.3";
                 content.Sound = "999";
                 
                 string thingName = "MyTestThing";
 
                 //Act
-                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData(thingName, DateTime.Now, (DynamicObjectDictionary) content).Result;
 
                 //Assert
                 Assert.That(result.ResultData.Temperature, Is.EqualTo("22.3"));
@@ -184,27 +184,27 @@ namespace Ruzzie.SensorData.UnitTests
             {
                 //Arange
                 //Arrange
-                dynamic content = new DynamicDictionaryObject();
+                dynamic content = new DynamicObjectDictionary();
                 content.Temperature = "22.3";
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData("Test", currentDateTime, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData("Test", currentDateTime, (DynamicObjectDictionary) content).Result;
 
                 //Assert
-                Assert.That(result.TimeStamp, Is.EqualTo(currentDateTime));
+                Assert.That(result.Timestamp, Is.EqualTo(currentDateTime));
             }
 
             [Test]
             public void MustReturnThingName()
             {
                 //Arange
-                dynamic content = new DynamicDictionaryObject();
+                dynamic content = new DynamicObjectDictionary();
                 content.Temperature = "22.3";
                 DateTime currentDateTime = new DateTime(2015, 3, 1);
 
                 //Act            
-                PushDataResult result = _pushDataService.PushData("TestName", currentDateTime, (DynamicDictionaryObject) content).Result;
+                PushDataResult result = _pushDataService.PushData("TestName", currentDateTime, (DynamicObjectDictionary) content).Result;
 
                 //Assert
                 Assert.That(result.ThingName, Is.EqualTo("TestName"));

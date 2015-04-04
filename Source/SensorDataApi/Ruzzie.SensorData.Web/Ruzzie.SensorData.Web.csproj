@@ -32,6 +32,7 @@
     <DocumentationFile>bin\Ruzzie.SensorData.Web.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\CARuleSet.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -92,6 +93,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="Content\404.html" />
     <Content Include="Content\ErrorPage.html" />
     <Content Include="Default.aspx" />
@@ -117,19 +121,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IUpdateSensorDocumentMessageChannel.cs" />
     <Compile Include="IWebJob.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\PushDataController.cs" />
     <Compile Include="PushData\DataWriteServiceWithCache.cs" />
-    <Compile Include="DynamicDictionaryObject.cs" />
+    <Compile Include="DynamicObjectDictionary.cs" />
     <Compile Include="PushData\IPushDataService.cs" />
     <Compile Include="PushData\PushDataResult.cs" />
     <Compile Include="PushData\PushDataResultCode.cs" />
     <Compile Include="PushData\PushDataService.cs" />
     <Compile Include="RedisPubSubUpdateSensorDocumentMessageChannel.cs" />
-    <Compile Include="Repository\DynamicDictionaryObjectSerializer.cs" />
+    <Compile Include="Repository\DynamicObjectDictionarySerializer.cs" />
     <Compile Include="Repository\MongoClassMapBootstrap.cs" />
     <Compile Include="SensorItemDataDocument.cs" />
     <Compile Include="Repository\SensorItemDataRepositoryMongo.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -7,8 +8,8 @@ using MongoDB.Bson.Serialization.Serializers;
 
 namespace Ruzzie.SensorData.Web.Repository
 {
-    public class DynamicDictionaryObjectSerializer : DynamicDocumentBaseSerializer<DynamicDictionaryObject>,
-        IBsonSerializer<DynamicDictionaryObject>
+    public class DynamicObjectDictionarySerializer : DynamicDocumentBaseSerializer<DynamicObjectDictionary>,
+        IBsonSerializer<DynamicObjectDictionary>
     {
         private static readonly IBsonSerializer<BsonDocument> BsonDocumentSerializer = BsonSerializer.LookupSerializer<BsonDocument>();
         private static readonly IBsonSerializer<List<object>> ListSerializer = BsonSerializer.LookupSerializer<List<object>>();
@@ -18,8 +19,13 @@ namespace Ruzzie.SensorData.Web.Repository
             return Deserialize(context, args);
         }
 
-        public new void Serialize(BsonSerializationContext context, BsonSerializationArgs args, DynamicDictionaryObject value)
+        public new void Serialize(BsonSerializationContext context, BsonSerializationArgs args, DynamicObjectDictionary value)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
             IBsonWriter writer = context.Writer;
 
             if (writer.State == BsonWriterState.Value && value != null)
@@ -31,31 +37,41 @@ namespace Ruzzie.SensorData.Web.Repository
 
         public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
         {
-            Serialize(context, args, value as DynamicDictionaryObject);
+            Serialize(context, args, value as DynamicObjectDictionary);
         }
 
         protected override void ConfigureDeserializationContext(BsonDeserializationContext.Builder builder)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+
             builder.DynamicDocumentSerializer = this;
             builder.DynamicArraySerializer = ListSerializer;
         }
 
         protected override void ConfigureSerializationContext(BsonSerializationContext.Builder builder)
         {
-            builder.IsDynamicType = t => t == typeof (DynamicDictionaryObject) || t == typeof (List<object>) || t == typeof (ExpandoObject);
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+
+            builder.IsDynamicType = t => t == typeof (DynamicObjectDictionary) || t == typeof (List<object>) || t == typeof (ExpandoObject);
         }
 
-        protected override DynamicDictionaryObject CreateDocument()
+        protected override DynamicObjectDictionary CreateDocument()
         {
-            return new DynamicDictionaryObject();
+            return new DynamicObjectDictionary();
         }
 
-        protected override void SetValueForMember(DynamicDictionaryObject document, string memberName, object value)
+        protected override void SetValueForMember(DynamicObjectDictionary document, string memberName, object value)
         {
             ((IDictionary<string, object>) document)[memberName] = value;
         }
 
-        protected override bool TryGetValueForMember(DynamicDictionaryObject document, string memberName, out object value)
+        protected override bool TryGetValueForMember(DynamicObjectDictionary document, string memberName, out object value)
         {
             return ((IDictionary<string, object>) document).TryGetValue(memberName, out value);
         }

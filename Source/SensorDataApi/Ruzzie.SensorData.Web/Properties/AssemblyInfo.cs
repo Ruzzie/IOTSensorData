@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -39,3 +40,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: InternalsVisibleTo("Ruzzie.SensorData.UnitTests")]
 [assembly: InternalsVisibleTo("Ruzzie.SensorData.Web.IntegrationTests")]
+[assembly: CLSCompliant(true)]

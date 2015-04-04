@@ -23,7 +23,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             //Act
             pushDataService.PushData(thingName, DateTime.Now,
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
-            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName).Result;
+            GetDataResult getDataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(getDataResult.ResultData.Temperature, Is.EqualTo("25.0"));
@@ -44,7 +44,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             //Act            
             writeThroughCache.ResetLatestEntryCache();
-            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName).Result;
+            GetDataResult getDataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(getDataResult.ResultData, Is.Not.Null);
@@ -60,7 +60,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             string thingName = Guid.NewGuid().ToString();
 
             //Act            
-            GetDataResult getDataResult = getDataService.GetLastestDataEntryForThing(thingName).Result;
+            GetDataResult getDataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(getDataResult.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNotFound));            

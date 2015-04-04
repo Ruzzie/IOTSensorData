@@ -8,6 +8,6 @@ namespace Ruzzie.SensorData.Web
         public string ThingName { get; set; }
         public DateTime Created { get; set; }
         public string Id { get; set; }
-        public DynamicDictionaryObject Content { get; set; }                
+        public DynamicObjectDictionary Content { get; set; }                
     }
 }

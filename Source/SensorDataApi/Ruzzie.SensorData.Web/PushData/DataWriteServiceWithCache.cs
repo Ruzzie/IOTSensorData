@@ -7,7 +7,7 @@ namespace Ruzzie.SensorData.Web.PushData
 {
     public interface IDataWriteService
     {
-        Task CreateOrUpdateDataForThing(string thingName, DateTime timeStamp, dynamic data);
+        Task CreateOrUpdateDataForThing(string thingName, DateTime timestamp, dynamic data);
     }
 
     public class DataWriteServiceWithCache : IDataWriteService
@@ -32,11 +32,11 @@ namespace Ruzzie.SensorData.Web.PushData
         protected IWriteThroughCache TierTwoWriteThroughCache { get; set; }
         protected IUpdateSensorDocumentMessageChannel UpdateUpdateSensorDocumentMessageChannel { get; set; }
 
-        public async Task CreateOrUpdateDataForThing(string thingName, DateTime timeStamp, dynamic data)
+        public async Task CreateOrUpdateDataForThing(string thingName, DateTime timestamp, dynamic data)
         {
             var dataDocument = new SensorItemDataDocument();
             dataDocument.ThingName = thingName;
-            dataDocument.Created = timeStamp;
+            dataDocument.Created = timestamp;
             dataDocument.Content = data;
 
           

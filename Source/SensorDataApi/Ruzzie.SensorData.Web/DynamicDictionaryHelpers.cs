@@ -6,17 +6,17 @@ namespace Ruzzie.SensorData.Web
 {
     public static class DynamicDictionaryHelpers
     {
-        public static dynamic CreateDynamicValueAsDynamicDictionaryWhenTypeIsConvertable(dynamic valueToSet)
+        public static dynamic CreateDynamicValueAsDynamicDictionaryWhenTypeIsConvertible(dynamic valueToSet)
         {
             if (valueToSet is ExpandoObject)
             {
-                return new DynamicDictionaryObject(valueToSet);                
+                return new DynamicObjectDictionary(valueToSet);                
             }
 
             var token = valueToSet as JToken;
             if (token != null)
             {
-                return JsonConvert.DeserializeObject<DynamicDictionaryObject>(token.ToString());                
+                return JsonConvert.DeserializeObject<DynamicObjectDictionary>(token.ToString());                
             }
             return valueToSet;
         }

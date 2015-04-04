@@ -21,7 +21,7 @@ namespace Ruzzie.SensorData.Web.Controllers
         [Route("get/latest/data/for/{thing}")]
         public async Task<GetDataResult> GetLatest(string thing)
         {
-            return await GetDataService.GetLastestDataEntryForThing(thing);
+            return await GetDataService.GetLatestDataEntryForThing(thing);
         }
 
         /// <summary>
@@ -39,14 +39,14 @@ namespace Ruzzie.SensorData.Web.Controllers
             {                
                 var response = new HttpResponseMessage(HttpStatusCode.OK);
 
-                GetDataResult getDataResult = await GetDataService.GetLastestSingleValueForThing(thing,valueName);
+                GetDataResult getDataResult = await GetDataService.GetLatestSingleValueForThing(thing,valueName);
                 switch (getDataResult.GetDataResultCode)
                 {
                     case GetDataResultCode.Success:                        
                         response.Content = new StringContent(getDataResult.ResultData.ToString(), Encoding.UTF8); 
                         response.StatusCode = HttpStatusCode.OK;
                         break;
-                    case GetDataResultCode.FailedNoThingNameProvided:                                                
+                    case GetDataResultCode.FailedThingNameNotProvided:                                                
                     case GetDataResultCode.FailedThingNotFound:                        
                     case GetDataResultCode.ValueNameNotFound:
                     case GetDataResultCode.ValueNameNotProvided:

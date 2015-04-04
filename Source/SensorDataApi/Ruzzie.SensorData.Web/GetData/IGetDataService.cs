@@ -4,7 +4,7 @@ namespace Ruzzie.SensorData.Web.GetData
 {
     public interface IGetDataService
     {        
-        Task<GetDataResult> GetLastestDataEntryForThing(string thingName);
-        Task<GetDataResult> GetLastestSingleValueForThing(string thingName, string valueName);
+        Task<GetDataResult> GetLatestDataEntryForThing(string thingName);
+        Task<GetDataResult> GetLatestSingleValueForThing(string thingName, string valueName);
     }
 }

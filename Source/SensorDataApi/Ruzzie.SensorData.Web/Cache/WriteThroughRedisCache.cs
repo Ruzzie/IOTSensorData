@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -19,6 +20,11 @@ namespace Ruzzie.SensorData.Web.Cache
 
         public WriteThroughRedisCache(ConnectionMultiplexer redis)
         {
+            if (redis == null)
+            {
+                throw new ArgumentNullException("redis");
+            }
+
             _redis = redis;
             LatestEntryCache = _redis.GetDatabase();
         }
@@ -55,14 +61,14 @@ namespace Ruzzie.SensorData.Web.Cache
             }
         }
 
-        private RedisKey CreateKeyForLatestEntry(SensorItemDataDocument dataDocument)
+        private static RedisKey CreateKeyForLatestEntry(SensorItemDataDocument dataDocument)
         {
             return CreateKeyForLatestEntry(dataDocument.ThingName);
         }
 
-        private RedisKey CreateKeyForLatestEntry(string thingName)
+        private static RedisKey CreateKeyForLatestEntry(string thingName)
         {
-            return string.Format(LatestItemKeyFormatString, thingName);
+            return string.Format(CultureInfo.InvariantCulture, LatestItemKeyFormatString, thingName);
         }
 
         public async Task<SensorItemDataDocument> GetLatest(string thingName)

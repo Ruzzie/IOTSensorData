@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.Web.GetData
             get { return _resultData; }
             set
             {
-                _resultData = DynamicDictionaryHelpers.CreateDynamicValueAsDynamicDictionaryWhenTypeIsConvertable(value);
+                _resultData = DynamicDictionaryHelpers.CreateDynamicValueAsDynamicDictionaryWhenTypeIsConvertible(value);
             }
         }
         

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Ruzzie.SensorData.Web.PushData
 {
-    [KnownType(typeof (DynamicDictionaryObject))]
+    [KnownType(typeof (DynamicObjectDictionary))]
     [DataContract]
     public class PushDataResult
     {
@@ -21,12 +21,12 @@ namespace Ruzzie.SensorData.Web.PushData
             get { return _resultData; }
             set
             {                
-                _resultData = DynamicDictionaryHelpers.CreateDynamicValueAsDynamicDictionaryWhenTypeIsConvertable(value);
+                _resultData = DynamicDictionaryHelpers.CreateDynamicValueAsDynamicDictionaryWhenTypeIsConvertible(value);
             }
         }
 
         [DataMember]
-        public DateTime TimeStamp { get; set; }
+        public DateTime Timestamp { get; set; }
 
         [DataMember]
         public string ThingName { get; set; }

@@ -27,7 +27,7 @@ namespace Ruzzie.SensorData.UnitTests
             SensorItemDataDocument document = new SensorItemDataDocument();
             document.ThingName = "ExpireThing";
             document.Created = DateTime.Now;
-            document.Content = new DynamicDictionaryObject();
+            document.Content = new DynamicObjectDictionary();
             Cache.Update(document).Wait();
 
             _stubUpdateSensorDocumentMessageChannel.Publish(document.ThingName).Wait();
@@ -42,7 +42,7 @@ namespace Ruzzie.SensorData.UnitTests
             DateTime dateTime = DateTime.Now;
             Parallel.For(0, 20000, async i =>
             {
-                var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = dateTime.Subtract(new TimeSpan(0, 0, 0, 0, i)), ThingName = Guid.NewGuid().ToString() };
+                var document = new SensorItemDataDocument { Content = new DynamicObjectDictionary(), Created = dateTime.Subtract(new TimeSpan(0, 0, 0, 0, i)), ThingName = Guid.NewGuid().ToString() };
                 await Cache.Update(document);
             });
 
@@ -63,7 +63,7 @@ namespace Ruzzie.SensorData.UnitTests
         {
             //Arrange
             DateTime current = new DateTime(2015, 12, 1);
-            var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = current, ThingName = "SmokeTest2" };
+            var document = new SensorItemDataDocument { Content = new DynamicObjectDictionary(), Created = current, ThingName = "SmokeTest2" };
 
             //Act
             var clonedDocument = document.DeepClone();

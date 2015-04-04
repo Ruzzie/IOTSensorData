@@ -18,7 +18,7 @@ namespace Ruzzie.SensorData.UnitTests
         [Test]
         public void SetMemberViaIndexerTwiceShouldOverwriteValue()
         {
-            dynamic testObject = new DynamicDictionaryObject();
+            dynamic testObject = new DynamicObjectDictionary();
             testObject["Property"] = "MyValue";
             testObject["Property"] = "MyValue";
         }
@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.UnitTests
         [Test]
         public void SetMemberViaPropertyTwiceShouldOverwriteValue()
         {
-            dynamic testObject = new DynamicDictionaryObject();
+            dynamic testObject = new DynamicObjectDictionary();
             testObject.Property = "MyValue";
             testObject.Property = "MyValue";
             
@@ -35,7 +35,7 @@ namespace Ruzzie.SensorData.UnitTests
         [Test]
         public void CaseInsensitivityTest()
         {
-            dynamic testObject = new DynamicDictionaryObject();
+            dynamic testObject = new DynamicObjectDictionary();
             testObject.property = "MyValue1";
             testObject.Property = "MyValue2";
 
@@ -46,16 +46,16 @@ namespace Ruzzie.SensorData.UnitTests
         public void ImplicitFromExpandoOperatorTest()
         {
             dynamic expandoObject = new ExpandoObject();
-            DynamicDictionaryObject myObject = expandoObject;
+            DynamicObjectDictionary myObject = expandoObject;
 
-            Assert.That(myObject,Is.TypeOf<DynamicDictionaryObject>());
+            Assert.That(myObject,Is.TypeOf<DynamicObjectDictionary>());
         }
 
         [Test]
         public void GetObjectEnumeratorTest()
         {
             //Arrange
-            dynamic obj = new DynamicDictionaryObject();
+            dynamic obj = new DynamicObjectDictionary();
             obj.Temperature = "22";
             
             //Act
@@ -81,14 +81,14 @@ namespace Ruzzie.SensorData.UnitTests
             MethodInfo isDictTypeMethodInfo = typeof (DynamicDictionaryObjectTests).GetMethod("IsDictionaryType");
             Type dictStringObject = typeof (IDictionary<string, object>);
             //Arrange
-            DynamicDictionaryObject dynamicDictionary = new DynamicDictionaryObject();
-            DynamicMethod methodBuilder = new DynamicMethod("Cast_Test", typeof (IDictionary<string, object>),new []{typeof(DynamicDictionaryObject)});
+            DynamicObjectDictionary dynamicObjectDictionary = new DynamicObjectDictionary();
+            DynamicMethod methodBuilder = new DynamicMethod("Cast_Test", typeof (IDictionary<string, object>),new []{typeof(DynamicObjectDictionary)});
             ILGenerator il = methodBuilder.GetILGenerator();
 
 
             var isDictTypeLabel = il.DefineLabel();
 
-            var localTypeDecl = il.DeclareLocal(typeof(Type));//Type type = typeof(DynamicDictionaryObject);
+            var localTypeDecl = il.DeclareLocal(typeof(Type));//Type type = typeof(DynamicObjectDictionary);
             
             il.Emit(OpCodes.Ldarg_0);//load the dictionary on the stack
             il.Emit(OpCodes.Callvirt, typeof(object).GetMethod("GetType"));//gettype from dynamicdictionaryobject
@@ -109,7 +109,7 @@ namespace Ruzzie.SensorData.UnitTests
             il.Emit(OpCodes.Ret);
 
             //Act
-            var castedDynamicDic = methodBuilder.Invoke(null,new object[]{dynamicDictionary});
+            var castedDynamicDic = methodBuilder.Invoke(null,new object[]{dynamicObjectDictionary});
 
             Assert.That(castedDynamicDic,Is.Not.Null);
 
@@ -129,7 +129,7 @@ namespace Ruzzie.SensorData.UnitTests
             doc.ThingName = "SerializedTest";
             doc.Created = new DateTime(2015, 1, 31, 0, 0, 0, DateTimeKind.Utc);
 
-            dynamic content = new DynamicDictionaryObject();
+            dynamic content = new DynamicObjectDictionary();
             content.TemperatureAsString = "22";
             content.TemperatureAsInt = 22;
             content.TemperatureAsDouble = 22.0d;
@@ -167,13 +167,13 @@ namespace Ruzzie.SensorData.UnitTests
             doc.ThingName = "SerializedTest";
             doc.Created = new DateTime(2015,1,31,0,0,0,DateTimeKind.Utc);
            
-            dynamic content = new DynamicDictionaryObject();
+            dynamic content = new DynamicObjectDictionary();
             content.TemperatureAsString = "22";
             content.TemperatureAsInt = 22;
             content.TemperatureAsDouble = 22.0d;
             content.ItemsAsList = new List<string> {"1", "2"};
            
-            dynamic nestedContent = new DynamicDictionaryObject();
+            dynamic nestedContent = new DynamicObjectDictionary();
             nestedContent.DataItemOne = new Dictionary<string,int> {{"key", 1},{"key2",2}};
             content.NestedContent = nestedContent;
 

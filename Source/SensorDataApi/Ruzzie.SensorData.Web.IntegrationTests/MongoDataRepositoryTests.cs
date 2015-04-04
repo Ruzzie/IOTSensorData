@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         [Test]
         public void InsertSensorDataWithSimpleDatastructureTest()
         {
-            dynamic dataContent = new DynamicDictionaryObject();
+            dynamic dataContent = new DynamicObjectDictionary();
             dataContent.Temperature = "22";
             var sensorItemData = new SensorItemDataDocument
             {
@@ -47,7 +47,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         [Test]
         public void InsertSensorDataWithComplexDatastructureTest()
         {
-            dynamic dataContent = new DynamicDictionaryObject();
+            dynamic dataContent = new DynamicObjectDictionary();
             dataContent.Temperature = "22";
             dataContent.RawValues = new[] {1, 2, 3, 4, 5, 6};
             var sensorItemData = new SensorItemDataDocument
@@ -81,7 +81,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         public void TestBsonSerialization()
         {
             //Arrange
-            dynamic dataContent = new DynamicDictionaryObject();
+            dynamic dataContent = new DynamicObjectDictionary();
             dataContent.Temperature = "22";
             dataContent.RawValues = new[] { 1, 2, 3, 4, 5, 6 };
             var sensorItemData = new SensorItemDataDocument
@@ -104,7 +104,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         public void TestBsonDeserialization()
         {
             //Arrange
-            dynamic dataContent = new DynamicDictionaryObject();
+            dynamic dataContent = new DynamicObjectDictionary();
             dataContent.Temperature = "22";
             dataContent.RawValues = new[] { 1, 2, 3, 4, 5, 6 };
             var sensorItemData = new SensorItemDataDocument
@@ -129,9 +129,9 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         public void TestBsonDeserializationWithNestedDynamics()
         {
             //Arrange
-            dynamic nestedDynamic = new DynamicDictionaryObject();
+            dynamic nestedDynamic = new DynamicObjectDictionary();
             nestedDynamic.MyList = new[] {"A", "B"};
-            dynamic dataContent = new DynamicDictionaryObject();
+            dynamic dataContent = new DynamicObjectDictionary();
             dataContent.Temperature = "22";
             dataContent.RawValues = new[] { 1, 2, 3, 4, 5, 6 };
             dataContent.NestedItem = nestedDynamic;
@@ -157,11 +157,11 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         [Test]
         public void ValidDateTimeInContentWithSerialization()
         {
-            dynamic content = new DynamicDictionaryObject();
+            dynamic content = new DynamicObjectDictionary();
             content.MyDateTimeField = new DateTime(2015, 12, 15);
 
             //Act
-            BsonDocument bsonDocument = (content as DynamicDictionaryObject).ToBsonDocument();
+            BsonDocument bsonDocument = (content as DynamicObjectDictionary).ToBsonDocument();
 
             //Assert
             Assert.That(bsonDocument["mydatetimefield"].BsonType, Is.EqualTo(BsonType.DateTime));

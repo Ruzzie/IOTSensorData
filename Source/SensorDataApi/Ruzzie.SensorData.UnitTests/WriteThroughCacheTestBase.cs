@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.UnitTests
         {
             //Arrange
             DateTime current = DateTime.Now;
-            dynamic content = new DynamicDictionaryObject();
+            dynamic content = new DynamicObjectDictionary();
             content.Test = "TT";
             var document = new SensorItemDataDocument {Content = content, Created = current,ThingName = "SmokeTest1"};
             Cache.Update(document).Wait();
@@ -44,7 +44,7 @@ namespace Ruzzie.SensorData.UnitTests
         {
             //Arrange
             DateTime current = DateTime.Now;
-            dynamic content = new DynamicDictionaryObject();
+            dynamic content = new DynamicObjectDictionary();
             content.Test = "TT";
             content.SubInts = new[] {1, 2, 3};
             content.SubItems = new Dictionary<string, int> {{"a", 1}, {"b", 2}};
@@ -73,7 +73,7 @@ namespace Ruzzie.SensorData.UnitTests
             //Arrange
             DateTime current = new DateTime(2015,12,1,0,0,0, DateTimeKind.Utc);
             DateTime past = new DateTime(2001,12,25);
-            dynamic content = new DynamicDictionaryObject();
+            dynamic content = new DynamicObjectDictionary();
             content.Test = "TT";
             var document = new SensorItemDataDocument { Content = content, Created = current, ThingName = "SmokeTest2" };
             
@@ -104,7 +104,7 @@ namespace Ruzzie.SensorData.UnitTests
         {
             //Arrange
             DateTime current = DateTime.Now;
-            var document = new SensorItemDataDocument { Content = new DynamicDictionaryObject(), Created = current, ThingName = "SmokeTest3" };
+            var document = new SensorItemDataDocument { Content = new DynamicObjectDictionary(), Created = current, ThingName = "SmokeTest3" };
             Cache.Update(document).Wait();
 
             int count = Cache.PruneOldestItemCacheForItemsOlderThan(new TimeSpan(1)).Result;//all items

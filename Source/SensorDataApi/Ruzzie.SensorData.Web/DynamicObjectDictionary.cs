@@ -7,20 +7,20 @@ using System.Dynamic;
 namespace Ruzzie.SensorData.Web
 {   
     [Serializable]     
-    public sealed class DynamicDictionaryObject : DynamicObject, IDictionary<string,object>
+    public sealed class DynamicObjectDictionary : DynamicObject, IDictionary<string,object>
     {
         private readonly ConcurrentDictionary<string, dynamic> _internalMembers;
 
-        public DynamicDictionaryObject()
+        public DynamicObjectDictionary()
         {
             _internalMembers =
-                new ConcurrentDictionary<string, dynamic>(StringComparer.InvariantCultureIgnoreCase);
+                new ConcurrentDictionary<string, dynamic>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public DynamicDictionaryObject(IEnumerable<KeyValuePair<string,dynamic>> interalMembers)
+        public DynamicObjectDictionary(IEnumerable<KeyValuePair<string,dynamic>> internalMembers)
         {
             _internalMembers =
-                new ConcurrentDictionary<string, dynamic>(interalMembers,(StringComparer.InvariantCultureIgnoreCase));
+                new ConcurrentDictionary<string, dynamic>(internalMembers,(StringComparer.OrdinalIgnoreCase));
         }
 
         private ConcurrentDictionary<string, dynamic> InternalMembers
@@ -43,7 +43,7 @@ namespace Ruzzie.SensorData.Web
             //Auto create nested non initialized properties
             if (!exists)
             {
-                resultVal = new DynamicDictionaryObject();
+                resultVal = new DynamicObjectDictionary();
                 InternalMembers.GetOrAdd(memberName, resultVal);
             }
             return resultVal;
@@ -90,10 +90,15 @@ namespace Ruzzie.SensorData.Web
             return InternalMembers.Keys;
         }
 
-        public static implicit operator DynamicDictionaryObject(ExpandoObject expandoObject)
+        public static implicit operator DynamicObjectDictionary(ExpandoObject expandoObject)
         {
-            return  new DynamicDictionaryObject(expandoObject);            
-        }       
+            return new DynamicObjectDictionary(expandoObject);            
+        }
+
+        public static DynamicObjectDictionary FromExpandoObject(ExpandoObject expandoObject)
+        {
+            return expandoObject;
+        }
 
         IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
         {

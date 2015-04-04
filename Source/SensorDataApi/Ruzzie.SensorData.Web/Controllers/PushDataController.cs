@@ -28,7 +28,7 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// <param name="thing">A unique name of a thing. It is recommended that you use a GUID as to avoid name collisions.</param>
         /// <param name="content">The actual content of the string. Can be any valid JSON string.</param>
         /// <returns></returns>
-        public async Task<PushDataResult> Post(string thing, [FromBody] DynamicDictionaryObject content)
+        public async Task<PushDataResult> Post(string thing, [FromBody] DynamicObjectDictionary content)
         {
             return await PushDataService.PushData(thing, DateTime.Now, content);
         }

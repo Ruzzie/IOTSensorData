@@ -4,7 +4,7 @@
     {
         Success,
         FailedEmptyData,
-        FailedNoThingNameProvided,
+        FailedThingNameNotProvided,
         InvalidData,
         UnexpectedError
     }

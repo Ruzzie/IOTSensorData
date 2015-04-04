@@ -3,7 +3,7 @@
     public enum GetDataResultCode
     {
         Success,
-        FailedNoThingNameProvided,
+        FailedThingNameNotProvided,
         FailedThingNotFound,
         ValueNameNotFound,
         ValueNameNotProvided

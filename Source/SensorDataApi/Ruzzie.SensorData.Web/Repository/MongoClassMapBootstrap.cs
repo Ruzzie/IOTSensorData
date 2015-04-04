@@ -21,7 +21,7 @@ namespace Ruzzie.SensorData.Web.Repository
             MapIdProperty(obj => obj.Id).SetIdGenerator(new StringObjectIdGenerator());
             MapProperty(obj => obj.ThingName);
             MapProperty(obj => obj.Created);
-            MapProperty(obj => obj.Content).SetSerializer(new DynamicDictionaryObjectSerializer());
+            MapProperty(obj => obj.Content).SetSerializer(new DynamicObjectDictionarySerializer());
         }
     }
 }

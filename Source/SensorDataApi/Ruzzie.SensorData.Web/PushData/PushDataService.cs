@@ -17,12 +17,12 @@ namespace Ruzzie.SensorData.Web.PushData
         public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime,
             IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
-            var result = new PushDataResult {TimeStamp = currentDateTime};
+            var result = new PushDataResult {Timestamp = currentDateTime};
             result.ThingName = thingName;
 
             if (string.IsNullOrWhiteSpace(thingName))
             {
-                result.PushDataResultCode = PushDataResultCode.FailedNoThingNameProvided;
+                result.PushDataResultCode = PushDataResultCode.FailedThingNameNotProvided;
                 return result;
             }
 
@@ -44,18 +44,18 @@ namespace Ruzzie.SensorData.Web.PushData
             dynamic resultObject = MapKeyValuePairsToDynamic(keyValuePairsAsList);            
             result.ResultData = resultObject;
 
-            await DataWriteService.CreateOrUpdateDataForThing(thingName, result.TimeStamp, result.ResultData);
+            await DataWriteService.CreateOrUpdateDataForThing(thingName, result.Timestamp, result.ResultData);
 
             return result;
         }
 
-        public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content)
+        public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicObjectDictionary content)
         {
-            var result = new PushDataResult {TimeStamp = currentDateTime, ThingName = thingName};
+            var result = new PushDataResult {Timestamp = currentDateTime, ThingName = thingName};
 
             if (string.IsNullOrWhiteSpace(thingName))
             {
-                result.PushDataResultCode = PushDataResultCode.FailedNoThingNameProvided;
+                result.PushDataResultCode = PushDataResultCode.FailedThingNameNotProvided;
                 return result;
             }            
             
@@ -69,13 +69,13 @@ namespace Ruzzie.SensorData.Web.PushData
 
                 result.ResultData = content;
 
-                await DataWriteService.CreateOrUpdateDataForThing(thingName, result.TimeStamp, content);
+                await DataWriteService.CreateOrUpdateDataForThing(thingName, result.Timestamp, content);
                 return result;
             }
             catch (Exception e)
             {
                 result.PushDataResultCode = PushDataResultCode.UnexpectedError;
-                result.ResultData = new DynamicDictionaryObject();
+                result.ResultData = new DynamicObjectDictionary();
                 result.ResultData.ErrorMessage = e.Message;
                 return result;
             }
@@ -83,7 +83,7 @@ namespace Ruzzie.SensorData.Web.PushData
 
         private static dynamic MapKeyValuePairsToDynamic(List<KeyValuePair<string, string>> keyValuePairs)
         {
-            dynamic result = new DynamicDictionaryObject();
+            dynamic result = new DynamicObjectDictionary();
             for (int i = 0; i < keyValuePairs.Count; i++)
             {
                 if (string.IsNullOrWhiteSpace(keyValuePairs[i].Key) || string.IsNullOrWhiteSpace(keyValuePairs[i].Value))

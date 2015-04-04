@@ -26,11 +26,11 @@ namespace Ruzzie.SensorData.UnitTests
 
             string thingName = Guid.NewGuid().ToString();
             DateTime timeStamp = new DateTime(2015,3,31,1,0,0,0);
-            dynamic data = new DynamicDictionaryObject();
+            dynamic data = new DynamicObjectDictionary();
             data.Distance = 23.0;
 
             //Act
-            dataWriteService.CreateOrUpdateDataForThing(thingName, timeStamp, data);
+            dataWriteService.CreateOrUpdateDataForThing(thingName, timeStamp, data).Wait();
 
             Thread.Sleep(1);
 
@@ -44,16 +44,16 @@ namespace Ruzzie.SensorData.UnitTests
         //only supports one subscription per channel for test purposes
         Dictionary<string,Action<string>> _subscriptions  = new Dictionary<string, Action<string>>();
 
-        public async Task Subscribe(Action<string> callBack)
+        public async Task Subscribe(Action<string> callback)
         {
             await Task.Run(() =>
-                _subscriptions[MessageChannelNames.UpdateLatestThingNotifications] = callBack);
+                _subscriptions[MessageChannelNames.UpdateLatestThingNotifications] = callback);
 
         }
 
-        public async Task Publish(string message)
+        public async Task Publish(string thingName)
         {
-            await Task.Run(()=>_subscriptions[MessageChannelNames.UpdateLatestThingNotifications].Invoke(message));
+            await Task.Run(()=>_subscriptions[MessageChannelNames.UpdateLatestThingNotifications].Invoke(thingName));
         }
     }
 }

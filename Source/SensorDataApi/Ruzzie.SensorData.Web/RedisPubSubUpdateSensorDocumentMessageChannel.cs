@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Ruzzie.SensorData.Web.Cache;
 using StackExchange.Redis;
@@ -11,6 +12,11 @@ namespace Ruzzie.SensorData.Web
 
         public RedisPubSubUpdateSensorDocumentMessageChannel(ConnectionMultiplexer redis)
         {
+            if (redis == null)
+            {
+                throw new ArgumentNullException("redis");
+            }
+
             _subscriber = redis.GetSubscriber();
             SenderId = Guid.NewGuid().ToString();
         }
@@ -24,14 +30,14 @@ namespace Ruzzie.SensorData.Web
             await _subscriber.PublishAsync(MessageChannelNames.UpdateLatestThingNotifications, message, CommandFlags.FireAndForget);
         }
 
-        public async Task Subscribe(Action<string> callBack)
+        public async Task Subscribe(Action<string> callback)
         {
             await _subscriber.SubscribeAsync(MessageChannelNames.UpdateLatestThingNotifications, (channel, value) =>
             {
                 UpdateSensorDocumentMessage message = UpdateSensorDocumentMessage.FromString(value);
                 if (message.SenderId != SenderId)
                 {
-                    callBack.Invoke(message.ThingName);
+                    callback.Invoke(message.ThingName);
                 }
             });
         }                
@@ -67,7 +73,7 @@ namespace Ruzzie.SensorData.Web
 
         public static string CreateMessage(string senderId, string thingName)
         {
-            return string.Format(Format, senderId, thingName);
+            return string.Format(CultureInfo.InvariantCulture, Format, senderId, thingName);
         }
 
         public override string ToString()

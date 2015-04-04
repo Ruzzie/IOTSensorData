@@ -15,15 +15,15 @@ namespace Ruzzie.SensorData.Web.Repository
     {
         private IMongoDatabase _mongoDatabase;
 
-        public SensorItemDataRepositoryMongo(string connectionstring)
+        public SensorItemDataRepositoryMongo(string connectionString)
         {
-            ConnectAndGetDatabase(connectionstring);
+            ConnectAndGetDatabase(connectionString);
         }
 
-        private void ConnectAndGetDatabase(string connectionstring)
+        private void ConnectAndGetDatabase(string connectionString)
         {
-            var mongoClient = new MongoClient(connectionstring);
-            var str = new ConnectionString(connectionstring);
+            var mongoClient = new MongoClient(connectionString);
+            var str = new ConnectionString(connectionString);
             _mongoDatabase = mongoClient.GetDatabase(str.DatabaseName);
         }
 

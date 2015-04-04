@@ -8,6 +8,6 @@ namespace Ruzzie.SensorData.Web.PushData
     {
         Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, IEnumerable<KeyValuePair<string, string>> keyValuePairs);
 
-        Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicDictionaryObject content);
+        Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicObjectDictionary content);
     }
 }

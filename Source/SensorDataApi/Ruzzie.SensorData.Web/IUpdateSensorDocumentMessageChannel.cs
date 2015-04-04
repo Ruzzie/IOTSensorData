@@ -5,7 +5,7 @@ namespace Ruzzie.SensorData.Web
 {
     public interface IUpdateSensorDocumentMessageChannel
     {
-        Task Publish(string message);
-        Task Subscribe(Action<string> callBack);
+        Task Publish(string thingName);
+        Task Subscribe(Action<string> callback);
     }
 }

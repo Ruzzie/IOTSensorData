@@ -10,19 +10,12 @@ namespace Ruzzie.SensorData.Web.Cache
     public class WriteThroughCacheLocal : IWriteThroughCache
     {
         private readonly IUpdateSensorDocumentMessageChannel _updateSensorDocumentMessageChannel;
-        private static readonly ConcurrentDictionary<string, SensorItemDataDocument> LatestEntryCache;
+        private static readonly ConcurrentDictionary<string, SensorItemDataDocument> LatestEntryCache = new ConcurrentDictionary<string, SensorItemDataDocument>(StringComparer.OrdinalIgnoreCase);
         private static readonly TimeSpan DefaultCacheDurationForLatestItems = new TimeSpan(0, 4, 0, 0, 0);
         private static readonly TimeSpan DefaultPruneInterval = new TimeSpan(0, 0, 0, 5, 0);
         private static DateTime _lastPruneDateTime = DateTime.Now;
         private static PruneJobStatus _pruneJobStatus = PruneJobStatus.Idle;
         private static readonly ReaderWriterLockSlim PruneTaskLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-
-
-        static WriteThroughCacheLocal()
-        {
-            //create level one cache 
-            LatestEntryCache = new ConcurrentDictionary<string, SensorItemDataDocument>(StringComparer.InvariantCultureIgnoreCase);
-        }
 
         public WriteThroughCacheLocal()
         {
@@ -31,6 +24,11 @@ namespace Ruzzie.SensorData.Web.Cache
 
         public WriteThroughCacheLocal(IUpdateSensorDocumentMessageChannel updateSensorDocumentMessageChannel)
         {
+            if (updateSensorDocumentMessageChannel == null)
+            {
+                throw new ArgumentNullException("updateSensorDocumentMessageChannel");
+            }
+
             _updateSensorDocumentMessageChannel = updateSensorDocumentMessageChannel;
             updateSensorDocumentMessageChannel.Subscribe(LatestThingIsUpdatedNotification);
         }
@@ -129,6 +127,7 @@ namespace Ruzzie.SensorData.Web.Cache
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
+                    throw;
                 }
                 finally
                 {
