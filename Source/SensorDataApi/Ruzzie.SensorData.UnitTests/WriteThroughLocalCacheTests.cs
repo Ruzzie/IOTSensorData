@@ -12,9 +12,9 @@ namespace Ruzzie.SensorData.UnitTests
     [TestFixture]
     public class LocalWriteThroughCacheTests : WriteThroughCacheTestBase{
         
-        private static StubUpdateSensorDocumentMessageChannel _stubUpdateSensorDocumentMessageChannel = new StubUpdateSensorDocumentMessageChannel();
+        private static StubCacheUpdateSensorDocumentMessageChannel _stubCacheUpdateSensorDocumentMessageChannel = new StubCacheUpdateSensorDocumentMessageChannel();
 
-        public LocalWriteThroughCacheTests():base(new WriteThroughCacheLocal(_stubUpdateSensorDocumentMessageChannel))
+        public LocalWriteThroughCacheTests():base(new WriteThroughCacheLocal(_stubCacheUpdateSensorDocumentMessageChannel))
         {            
             
         }
@@ -30,7 +30,7 @@ namespace Ruzzie.SensorData.UnitTests
             document.Content = new DynamicObjectDictionary();
             Cache.Update(document).Wait();
 
-            _stubUpdateSensorDocumentMessageChannel.Publish(document.ThingName).Wait();
+            _stubCacheUpdateSensorDocumentMessageChannel.Publish(document.ThingName).Wait();
             Thread.Sleep(1);
 
             Assert.That(Cache.GetLatest(document.ThingName).Result,Is.EqualTo(null));

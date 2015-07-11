@@ -19,10 +19,10 @@ namespace Ruzzie.SensorData.UnitTests
             //Arrange
             ISensorItemDataRepository repository = new Moq.Mock<ISensorItemDataRepository>().Object;
 
-            StubUpdateSensorDocumentMessageChannel updateUpdateSensorDocumentMessageChannel = new StubUpdateSensorDocumentMessageChannel();
+            StubCacheUpdateSensorDocumentMessageChannel cacheUpdateCacheUpdateSensorDocumentMessageChannel = new StubCacheUpdateSensorDocumentMessageChannel();
             string lastMessage = string.Empty;
-            updateUpdateSensorDocumentMessageChannel.Subscribe(message => lastMessage = message).Wait();
-            IDataWriteService dataWriteService = new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository, updateUpdateSensorDocumentMessageChannel);
+            cacheUpdateCacheUpdateSensorDocumentMessageChannel.Subscribe(message => lastMessage = message).Wait();
+            IDataWriteService dataWriteService = new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository, cacheUpdateCacheUpdateSensorDocumentMessageChannel);
 
             string thingName = Guid.NewGuid().ToString();
             DateTime timeStamp = new DateTime(2015,3,31,1,0,0,0);
@@ -39,7 +39,7 @@ namespace Ruzzie.SensorData.UnitTests
         }
     }
 
-    public class StubUpdateSensorDocumentMessageChannel : IUpdateSensorDocumentMessageChannel
+    public class StubCacheUpdateSensorDocumentMessageChannel : ICacheUpdateSensorDocumentMessageChannel
     {
         //only supports one subscription per channel for test purposes
         Dictionary<string,Action<string>> _subscriptions  = new Dictionary<string, Action<string>>();

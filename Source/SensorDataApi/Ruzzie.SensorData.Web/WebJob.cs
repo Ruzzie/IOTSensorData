@@ -24,8 +24,8 @@ namespace Ruzzie.SensorData.Web
         }
 
         public void Start()
-        {                        
-            _cache.Add(JobId, JobId, null, System.Web.Caching.Cache.NoAbsoluteExpiration,_interval, CacheItemPriority.Normal, Callback);
+        {
+            _cache.Add(JobId, JobId, null, System.Web.Caching.Cache.NoAbsoluteExpiration, _interval, CacheItemPriority.Normal, Callback);
         }
 
         private void Callback(string key, object value, CacheItemRemovedReason reason)

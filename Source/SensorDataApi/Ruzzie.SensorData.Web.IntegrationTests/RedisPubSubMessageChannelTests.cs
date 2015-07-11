@@ -9,8 +9,8 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         [Test]
         public void SmokeTest()
         {
-            IUpdateSensorDocumentMessageChannel channelOne = new RedisPubSubUpdateSensorDocumentMessageChannel(Container.Redis);
-            IUpdateSensorDocumentMessageChannel channelTwo = new RedisPubSubUpdateSensorDocumentMessageChannel(Container.Redis);
+            ICacheUpdateSensorDocumentMessageChannel channelOne = new RedisPubSubCacheUpdateSensorDocumentMessageChannel(Container.Redis);
+            ICacheUpdateSensorDocumentMessageChannel channelTwo = new RedisPubSubCacheUpdateSensorDocumentMessageChannel(Container.Redis);
             string latestMessage = string.Empty;
             
             channelTwo.Subscribe(s => latestMessage =s);

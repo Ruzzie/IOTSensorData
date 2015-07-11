@@ -9,7 +9,7 @@ namespace Ruzzie.SensorData.Web.Cache
 {
     public class WriteThroughCacheLocal : IWriteThroughCache
     {
-        private readonly IUpdateSensorDocumentMessageChannel _updateSensorDocumentMessageChannel;
+        private readonly ICacheUpdateSensorDocumentMessageChannel _cacheUpdateSensorDocumentMessageChannel;
         private static readonly ConcurrentDictionary<string, SensorItemDataDocument> LatestEntryCache = new ConcurrentDictionary<string, SensorItemDataDocument>(StringComparer.OrdinalIgnoreCase);
         private static readonly TimeSpan DefaultCacheDurationForLatestItems = new TimeSpan(0, 4, 0, 0, 0);
         private static readonly TimeSpan DefaultPruneInterval = new TimeSpan(0, 0, 0, 5, 0);
@@ -22,15 +22,15 @@ namespace Ruzzie.SensorData.Web.Cache
             
         }
 
-        public WriteThroughCacheLocal(IUpdateSensorDocumentMessageChannel updateSensorDocumentMessageChannel)
+        public WriteThroughCacheLocal(ICacheUpdateSensorDocumentMessageChannel cacheUpdateSensorDocumentMessageChannel)
         {
-            if (updateSensorDocumentMessageChannel == null)
+            if (cacheUpdateSensorDocumentMessageChannel == null)
             {
-                throw new ArgumentNullException("updateSensorDocumentMessageChannel");
+                throw new ArgumentNullException("cacheUpdateSensorDocumentMessageChannel");
             }
 
-            _updateSensorDocumentMessageChannel = updateSensorDocumentMessageChannel;
-            updateSensorDocumentMessageChannel.Subscribe(LatestThingIsUpdatedNotification);
+            _cacheUpdateSensorDocumentMessageChannel = cacheUpdateSensorDocumentMessageChannel;
+            cacheUpdateSensorDocumentMessageChannel.Subscribe(LatestThingIsUpdatedNotification);
         }
 
         private void LatestThingIsUpdatedNotification(string thingName)
