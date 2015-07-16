@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.GetData;
 using Ruzzie.SensorData.Web.PushData;
+using DataResultCode = Ruzzie.SensorData.Web.DataResultCode;
 
 namespace Ruzzie.SensorData.Web.IntegrationTests
 {
@@ -23,10 +24,10 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             //Act
             pushDataService.PushData(thingName, DateTime.Now,
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
-            GetDataResult getDataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult dataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
-            Assert.That(getDataResult.ResultData.Temperature, Is.EqualTo("25.0"));
+            Assert.That(dataResult.ResultData.Temperature, Is.EqualTo("25.0"));
         }
 
         [Test]
@@ -44,11 +45,11 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             //Act            
             writeThroughCache.ResetLatestEntryCache();
-            GetDataResult getDataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult dataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
-            Assert.That(getDataResult.ResultData, Is.Not.Null);
-            Assert.That(getDataResult.ResultData.Temperature.ToString(), Is.EqualTo("25.0"));            
+            Assert.That(dataResult.ResultData, Is.Not.Null);
+            Assert.That(dataResult.ResultData.Temperature.ToString(), Is.EqualTo("25.0"));            
         }
 
         [Test]
@@ -60,10 +61,10 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             string thingName = Guid.NewGuid().ToString();
 
             //Act            
-            GetDataResult getDataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult dataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
-            Assert.That(getDataResult.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNotFound));            
+            Assert.That(dataResult.DataResultCode, Is.EqualTo(DataResultCode.FailedThingNotFound));            
         }
         
     }
