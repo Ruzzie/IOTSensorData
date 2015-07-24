@@ -15,7 +15,7 @@ namespace Ruzzie.SensorData.Web
         /// </summary>
 
         [DataMember]
-        [JsonConverter(typeof (StringEnumConverter))]        
+        [JsonConverter(typeof (StringEnumConverter))]
         public DataResultCode DataResultCode { [UsedImplicitly] get; [UsedImplicitly] set; }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Ruzzie.SensorData.Web
 
     /// <summary>
     /// Result of data stored for a thing.
-    /// </summary>   
+    /// </summary> 
     public class DataResult : DataResultBase<dynamic>
     {
         private dynamic _resultData;

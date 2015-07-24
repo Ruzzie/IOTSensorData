@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -18,11 +19,12 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// </summary>
         /// <param name="thing">A unique name of a thing.</param>
         /// <returns><see cref="DataResult"/></returns>
-        [Route("get/latest/data/for/{thing}")]
+        [Route("get/latest/data/for/{thing}")]        
         public async Task<DataResult> GetLatest(string thing)
         {
             return await GetDataService.GetLatestDataEntryForThing(thing);
         }
+
 
         /// <summary>
         ///     Reads the single value for the latest entry for a thing.

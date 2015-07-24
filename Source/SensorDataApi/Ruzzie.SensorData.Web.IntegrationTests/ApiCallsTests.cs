@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -9,9 +7,6 @@ using System.Web.Http;
 using Microsoft.Owin.Testing;
 using NUnit.Framework;
 using Owin;
-using Ruzzie.SensorData.Web.GetData;
-using Ruzzie.SensorData.Web.MediaFormatters;
-using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.Web
 {
@@ -82,21 +77,6 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.Success));
             Assert.That(resultObject.ResultData.Temperature, Is.EqualTo("22"));
         }
-
-        //[Test]
-        //public void PushData_With_Valid_Post_Should_Succeed_protobuf()
-        //{
-        //    KeyValuePair<string,int> value = new KeyValuePair<string, int>("Temperature",22);
-        //    var httpClient = _server.HttpClient;
-
-        //    var response = httpClient.PostAsync("/pushdata/for/IntTest3", value, new ProtoBufMediaFormatter()).Result;
-        //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), response.Content.ReadAsStringAsync().Result);
-
-        //    var resultObject = response.Content.ReadAsAsync<PushDataResult>().Result;
-
-        //    Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.Success));
-        //    Assert.That(resultObject.ResultData.Temperature, Is.EqualTo("22"));
-        //}
 
         [Test]
         public void PushData_With_InValid_Post_Should_Fail()

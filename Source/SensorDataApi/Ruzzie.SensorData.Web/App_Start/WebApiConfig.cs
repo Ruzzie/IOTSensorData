@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Ruzzie.SensorData.Web.MediaFormatters;
 
 namespace Ruzzie.SensorData.Web
 {    
@@ -15,7 +14,6 @@ namespace Ruzzie.SensorData.Web
             config.Formatters.Clear();
             config.Formatters.Add(new JsonMediaTypeFormatter());
             config.Formatters.Add(new FormUrlEncodedMediaTypeFormatter());
-            config.Formatters.Add(new ProtoBufMediaFormatter());
             config.EnableCors(new EnableCorsAttribute("*", "*", "GET,POST"));
             //config.Formatters.Add(new XmlMediaTypeFormatter());
 
