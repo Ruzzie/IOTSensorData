@@ -86,6 +86,12 @@ namespace Ruzzie.SensorData.Web.Cache
             LatestEntryCache.Clear();
         }
 
+        public void RemoveItemFromLatestEntryCache(string thingName)
+        {
+            SensorItemDataDocument document;
+            LatestEntryCache.TryRemove(thingName, out document);
+        }
+
         private async Task<int> RemoveItems(ParallelQuery<string> itemsToPrune)
         {
             return await Task.Run(() =>

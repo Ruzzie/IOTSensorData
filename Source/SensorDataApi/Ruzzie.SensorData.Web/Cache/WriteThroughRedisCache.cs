@@ -14,7 +14,6 @@ namespace Ruzzie.SensorData.Web.Cache
         private const string LatestItemKeyFormatString = "sensoritemdatadocument:latest:{0}";
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly ConnectionMultiplexer _redis;
-        private IDatabase _redisDatabase;
         private TimeSpan _expireAfterTimeSpan = new TimeSpan(0, 0, 5, 0);
 
 
@@ -29,11 +28,7 @@ namespace Ruzzie.SensorData.Web.Cache
             LatestEntryCache = _redis.GetDatabase();
         }
 
-        protected IDatabase LatestEntryCache
-        {
-            get { return _redisDatabase; }
-            private set { _redisDatabase = value; }
-        }
+        protected IDatabase LatestEntryCache { get; private set; }
 
         public async Task Update(SensorItemDataDocument dataDocument)
         {
@@ -57,7 +52,7 @@ namespace Ruzzie.SensorData.Web.Cache
                         new HashEntry(LastModifiedFieldName, dataDocument.Created.Ticks),
                         new HashEntry(DocumentFieldName, JsonConvert.SerializeObject(dataDocument))
                     });
-                await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan,CommandFlags.FireAndForget);
+                await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan, CommandFlags.FireAndForget);
             }
         }
 
@@ -105,6 +100,11 @@ namespace Ruzzie.SensorData.Web.Cache
                 IServer server = _redis.GetServer(endPoint);
                 server.FlushDatabase();
             }
+        }
+
+        public void RemoveItemFromLatestEntryCache(string thingName)
+        {
+            LatestEntryCache.KeyDelete(CreateKeyForLatestEntry(thingName));
         }
     }
 }
