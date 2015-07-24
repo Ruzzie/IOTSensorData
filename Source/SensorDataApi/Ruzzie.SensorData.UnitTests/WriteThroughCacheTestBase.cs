@@ -6,6 +6,7 @@ using Ruzzie.SensorData.Web.Cache;
 
 namespace Ruzzie.SensorData.UnitTests
 {
+
     public class WriteThroughCacheTestBase    
     {
 
@@ -14,7 +15,7 @@ namespace Ruzzie.SensorData.UnitTests
             _cache = cacheUnderTest;
         }
 
-        private readonly IWriteThroughCache _cache = new WriteThroughCacheLocal();
+        private readonly IWriteThroughCache _cache;
 
         protected IWriteThroughCache Cache
         {

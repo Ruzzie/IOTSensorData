@@ -6,7 +6,7 @@ using System.Dynamic;
 
 namespace Ruzzie.SensorData.Web
 {   
-    [Serializable]     
+    [Serializable]
     public sealed class DynamicObjectDictionary : DynamicObject, IDictionary<string,object>
     {
         private readonly ConcurrentDictionary<string, dynamic> _internalMembers;

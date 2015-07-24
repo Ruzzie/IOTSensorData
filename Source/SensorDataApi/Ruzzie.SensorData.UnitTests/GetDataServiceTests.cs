@@ -36,10 +36,10 @@ namespace Ruzzie.SensorData.UnitTests
             string thingName = "ThingNameTest";
 
             //Act            
-            GetDataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
-            Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.Success));
+            Assert.That(result.DataResultCode, Is.EqualTo(DataResultCode.Success));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace Ruzzie.SensorData.UnitTests
             string thingName = "ThingNameTest";
 
             //Act            
-            GetDataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(result.ResultData, Is.Not.Null);
@@ -62,7 +62,7 @@ namespace Ruzzie.SensorData.UnitTests
             string thingName = "ThingNameTest";
 
             //Act            
-            GetDataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
             Assert.That(result.ThingName, Is.EqualTo("ThingNameTest"));
@@ -77,10 +77,10 @@ namespace Ruzzie.SensorData.UnitTests
         public void ReturnFailedNoThingNameWhenThingNameIsNullOrEmpty(string thingName)
         {
             //Act
-            GetDataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
+            DataResult result = _getDataService.GetLatestDataEntryForThing(thingName).Result;
 
             //Assert
-            Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNameNotProvided));
+            Assert.That(result.DataResultCode, Is.EqualTo(DataResultCode.FailedThingNameNotProvided));
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Ruzzie.SensorData.UnitTests
             string thingName = "ThingNameTest";
 
             //Act            
-            GetDataResult result = await _getDataService.GetLatestSingleValueForThing(thingName,"MyValue");
+            DataResult result = await _getDataService.GetLatestSingleValueForThing(thingName,"MyValue");
 
             //Assert
             Assert.That(result.ResultData, Is.EqualTo(1));
@@ -104,10 +104,10 @@ namespace Ruzzie.SensorData.UnitTests
             string thingName = "ThingNameTest";
 
             //Act            
-            GetDataResult result = await _getDataService.GetLatestSingleValueForThing(thingName, "");
+            DataResult result = await _getDataService.GetLatestSingleValueForThing(thingName, "");
 
             //Assert
-            Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.ValueNameNotProvided));
+            Assert.That(result.DataResultCode, Is.EqualTo(DataResultCode.ValueNameNotProvided));
         }
 
         [Test]
@@ -117,10 +117,10 @@ namespace Ruzzie.SensorData.UnitTests
             string thingName = "ThingNameTest";
 
             //Act            
-            GetDataResult result = await _getDataService.GetLatestSingleValueForThing(thingName, "MyValueDoesNotExist");
+            DataResult result = await _getDataService.GetLatestSingleValueForThing(thingName, "MyValueDoesNotExist");
 
             //Assert
-            Assert.That(result.GetDataResultCode, Is.EqualTo(GetDataResultCode.ValueNameNotFound));
+            Assert.That(result.DataResultCode, Is.EqualTo(DataResultCode.ValueNameNotFound));
         }
     }
 }

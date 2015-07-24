@@ -9,5 +9,6 @@ namespace Ruzzie.SensorData.Web.Cache
         Task<SensorItemDataDocument> GetLatest(string thingName);
         Task<int> PruneOldestItemCacheForItemsOlderThan(TimeSpan age);
         void ResetLatestEntryCache();
+        void RemoveItemFromLatestEntryCache(string thingName);
     }
 }

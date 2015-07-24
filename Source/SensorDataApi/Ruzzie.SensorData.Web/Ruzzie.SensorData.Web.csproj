@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -63,7 +64,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.1.0.450\lib\net45\StackExchange.Redis.dll</HintPath>
+      <HintPath>..\packages\StackExchange.Redis.1.0.481\lib\net45\StackExchange.Redis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
@@ -118,8 +119,8 @@
     <Compile Include="Controllers\GetDataController.cs" />
     <Compile Include="DynamicDictionaryHelpers.cs" />
     <Compile Include="GetData\DataReadServiceWithCache.cs" />
-    <Compile Include="GetData\GetDataResult.cs" />
-    <Compile Include="GetData\GetDataResultCode.cs" />
+    <Compile Include="DataResult.cs" />
+    <Compile Include="DataResultCode.cs" />
     <Compile Include="GetData\GetDataService.cs" />
     <Compile Include="GetData\IDataReadService.cs" />
     <Compile Include="GetData\IGetDataService.cs" />
@@ -135,8 +136,6 @@
     <Compile Include="PushData\DataWriteServiceWithCache.cs" />
     <Compile Include="DynamicObjectDictionary.cs" />
     <Compile Include="PushData\IPushDataService.cs" />
-    <Compile Include="PushData\PushDataResult.cs" />
-    <Compile Include="PushData\PushDataResultCode.cs" />
     <Compile Include="PushData\PushDataService.cs" />
     <Compile Include="RedisPubSubCacheUpdateSensorDocumentMessageChannel.cs" />
     <Compile Include="Repository\DynamicObjectDictionarySerializer.cs" />
