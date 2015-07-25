@@ -25,8 +25,10 @@ A simple store API for IOT. Inspired by dweet.io but the need for control over t
 - [x] Store dynamic data structure
 - [x] Caching of latest data
 - [x] Retrieving latest data
-- [ ] Improve serialization performance of dynamic type for caching
+- [x] Improve serialization performance of dynamic type for caching (good enough for now)
 - [ ] Create an overview page of Items
 - [ ] Export data for a timeperiod for an item
 - [ ] Create pipeline for data processing
-- [ ] Pub / Sub with socket.io 
+- [ ] Pub / Sub with socket.io for custom visualization purposes
+- [ ] Security strategy
+- [ ] Low payload protocol and library for IoT devices
