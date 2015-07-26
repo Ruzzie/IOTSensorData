@@ -18,10 +18,19 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             Cache.ResetLatestEntryCache();
         }
 
+        [Test]
+        [TestCase(0)]
+        [TestCase(-1)]
+        [TestCase(int.MinValue)]
+        public void CacheItemExpiryAfterInSecondsThrowsExceptionWhenLessOrEqualToZero(int seconds)
+        {
+            Assert.That(() => new WriteThroughRedisCache(Container.Redis, seconds), Throws.ArgumentException);
+        }
+
         [Ignore]
         public override void PruneCacheItemsOlderThanGivenValue()
         {
-            
+            base.PruneCacheItemsOlderThanGivenValue();
         }
     }
 }

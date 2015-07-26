@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.Web
 
             ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoConnString);
             WriteThroughLocalCache = new WriteThroughCacheLocal(cacheUpdateSensorDocumentMessageChannel);
-            RedisWriteThroughCache = new WriteThroughRedisCache(Redis);
+            RedisWriteThroughCache = new WriteThroughRedisCache(Redis, 300);
 
             TimeSpan localCacheExpiry = new TimeSpan(0,0,5,0);
             PruneLocalCacheJob = new WebJob(localCacheExpiry, () => WriteThroughLocalCache.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry), HttpRuntime.Cache ?? new System.Web.Caching.Cache());
