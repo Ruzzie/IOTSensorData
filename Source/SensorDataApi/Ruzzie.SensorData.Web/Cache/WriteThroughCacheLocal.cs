@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ruzzie.SensorData.Web.Cache
@@ -11,11 +9,6 @@ namespace Ruzzie.SensorData.Web.Cache
     {
         private readonly ICacheUpdateSensorDocumentMessageChannel _cacheUpdateSensorDocumentMessageChannel;
         private static readonly ConcurrentDictionary<string, SensorItemDataDocument> LatestEntryCache = new ConcurrentDictionary<string, SensorItemDataDocument>(StringComparer.OrdinalIgnoreCase);
-        private static readonly TimeSpan DefaultCacheDurationForLatestItems = new TimeSpan(0, 4, 0, 0, 0);
-        private static readonly TimeSpan DefaultPruneInterval = new TimeSpan(0, 0, 0, 5, 0);
-        private static DateTime _lastPruneDateTime = DateTime.Now;
-        private static PruneJobStatus _pruneJobStatus = PruneJobStatus.Idle;
-        private static readonly ReaderWriterLockSlim PruneTaskLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         public WriteThroughCacheLocal()
         {
@@ -103,58 +96,5 @@ namespace Ruzzie.SensorData.Web.Cache
                 });
             });
         }
-
-
-        public void PruneCache()
-        {
-            Task.Run(() =>
-            {
-                bool locked;
-                locked = PruneTaskLock.TryEnterWriteLock(1);
-                Task<int> pruneOldestItemCacheForItemsOlderThan = null;
-                try
-                {
-                    if (!locked)
-                    {
-                        return;
-                    }
-
-                    if (_lastPruneDateTime <= DateTime.Now.Subtract(DefaultPruneInterval))
-                    {
-                        if (_pruneJobStatus == PruneJobStatus.Idle)
-                        {
-                            _pruneJobStatus = PruneJobStatus.Pruning;
-                            _lastPruneDateTime = DateTime.Now;
-                            pruneOldestItemCacheForItemsOlderThan =
-                                PruneOldestItemCacheForItemsOlderThan(DefaultCacheDurationForLatestItems);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                    throw;
-                }
-                finally
-                {
-                    if (locked)
-                    {
-                        _pruneJobStatus = PruneJobStatus.Idle;
-                        PruneTaskLock.ExitWriteLock();
-                    }
-                    if (pruneOldestItemCacheForItemsOlderThan != null)
-                    {
-                        pruneOldestItemCacheForItemsOlderThan.Wait(DefaultPruneInterval);
-                    }
-                }
-            });
-        }
-    }
-
-    public enum PruneJobStatus
-    {
-        Idle,
-        Unavailable,
-        Pruning
     }
 }
