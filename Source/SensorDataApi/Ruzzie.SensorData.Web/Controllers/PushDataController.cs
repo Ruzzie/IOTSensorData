@@ -18,7 +18,7 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// <returns><see cref="DataResult"/></returns>
         public async Task<DataResult> Get(string thing)
         {
-            return await PushDataService.PushData(thing, DateTime.Now, Request.GetQueryNameValuePairs());
+            return await PushDataService.PushData(thing, DateTime.UtcNow, Request.GetQueryNameValuePairs());
         }
 
         
@@ -30,7 +30,7 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// <returns><see cref="DataResult"/></returns>
         public async Task<DataResult> Post(string thing, [FromBody] DynamicObjectDictionary content)
         {
-            return await PushDataService.PushData(thing, DateTime.Now, content);
+            return await PushDataService.PushData(thing, DateTime.UtcNow, content);
         }
     }
 }

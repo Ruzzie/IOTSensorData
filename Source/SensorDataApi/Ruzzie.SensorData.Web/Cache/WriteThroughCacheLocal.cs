@@ -69,7 +69,7 @@ namespace Ruzzie.SensorData.Web.Cache
         public async Task<int> PruneOldestItemCacheForItemsOlderThan(TimeSpan age)
         {
             ParallelQuery<string> itemsToPrune =
-                LatestEntryCache.AsParallel().Where(item => item.Value.Created < DateTime.Now.Subtract(age)).Select(item => item.Key);
+                LatestEntryCache.AsParallel().Where(item => item.Value.Created < DateTime.UtcNow.Subtract(age)).Select(item => item.Key);
 
             return await RemoveItems(itemsToPrune);
         }

@@ -13,7 +13,6 @@ namespace Ruzzie.SensorData.Web
         /// <summary>
         /// The result code of the GetData request.
         /// </summary>
-
         [DataMember]
         [JsonConverter(typeof (StringEnumConverter))]
         public DataResultCode DataResultCode { [UsedImplicitly] get; [UsedImplicitly] set; }
@@ -24,7 +23,7 @@ namespace Ruzzie.SensorData.Web
         public abstract T ResultData { get; set; }
 
         /// <summary>
-        /// The Timestamp of the data. When the data was stored.
+        /// The Timestamp of the data. When the data was stored UTC time.
         /// </summary>
         [DataMember]
         public DateTime Timestamp { [UsedImplicitly] get; set; }

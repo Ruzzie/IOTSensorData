@@ -22,7 +22,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             string thingName = Guid.NewGuid().ToString();
 
             //Act
-            pushDataService.PushData(thingName, DateTime.Now,
+            pushDataService.PushData(thingName, DateTime.UtcNow,
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
             DataResult dataResult = getDataService.GetLatestDataEntryForThing(thingName).Result;
 
@@ -40,7 +40,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             string thingName = Guid.NewGuid().ToString();
             Debug.WriteLine(thingName);
-            pushDataService.PushData(thingName, DateTime.Now,
+            pushDataService.PushData(thingName, DateTime.UtcNow,
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
 
             //Act            
@@ -65,7 +65,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
 
             string thingName = Guid.NewGuid().ToString();
             Debug.WriteLine(thingName);
-            pushDataService.PushData(thingName, DateTime.Now,
+            pushDataService.PushData(thingName, DateTime.UtcNow,
                 new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Temperature", "25.0") }).Wait();
 
             //Act     

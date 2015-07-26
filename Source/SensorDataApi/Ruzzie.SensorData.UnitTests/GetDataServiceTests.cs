@@ -21,7 +21,7 @@ namespace Ruzzie.SensorData.UnitTests
                 .Returns(Task.FromResult(new SensorItemDataDocument
                 {
                     Content = new DynamicObjectDictionary {new KeyValuePair<string, object>("MyValue",1)},
-                    Created = DateTime.Now,
+                    Created = DateTime.UtcNow,
                     ThingName = "ThingNameTest"
                 }));
             

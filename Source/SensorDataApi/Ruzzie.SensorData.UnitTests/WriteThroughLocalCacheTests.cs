@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.UnitTests
             
             SensorItemDataDocument document = new SensorItemDataDocument();
             document.ThingName = "ExpireThing";
-            document.Created = DateTime.Now;
+            document.Created = DateTime.UtcNow;
             document.Content = new DynamicObjectDictionary();
             Cache.Update(document).Wait();
 
