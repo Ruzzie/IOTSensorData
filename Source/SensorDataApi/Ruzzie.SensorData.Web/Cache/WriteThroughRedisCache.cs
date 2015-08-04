@@ -14,12 +14,16 @@ namespace Ruzzie.SensorData.Web.Cache
         private const string LatestItemKeyFormatString = "sensoritemdatadocument:latest:{0}";
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly ConnectionMultiplexer _redis;
-        private IDatabase _redisDatabase;
-        private TimeSpan _expireAfterTimeSpan = new TimeSpan(0, 0, 5, 0);
+        private readonly TimeSpan _expireCacheItemAfterTimeSpan;
 
 
-        public WriteThroughRedisCache(ConnectionMultiplexer redis)
+        public WriteThroughRedisCache(ConnectionMultiplexer redis, int expireCacheItemAfterDurationInSeconds = 5*60)
         {
+            if (expireCacheItemAfterDurationInSeconds <= 0)
+            {
+                throw new ArgumentException("Cannot be less or equal to zero.","expireCacheItemAfterDurationInSeconds");
+            }
+
             if (redis == null)
             {
                 throw new ArgumentNullException("redis");
@@ -27,13 +31,10 @@ namespace Ruzzie.SensorData.Web.Cache
 
             _redis = redis;
             LatestEntryCache = _redis.GetDatabase();
+            _expireCacheItemAfterTimeSpan = new TimeSpan(0, 0, expireCacheItemAfterDurationInSeconds);
         }
 
-        protected IDatabase LatestEntryCache
-        {
-            get { return _redisDatabase; }
-            private set { _redisDatabase = value; }
-        }
+        protected IDatabase LatestEntryCache { get; private set; }
 
         public async Task Update(SensorItemDataDocument dataDocument)
         {
@@ -57,7 +58,7 @@ namespace Ruzzie.SensorData.Web.Cache
                         new HashEntry(LastModifiedFieldName, dataDocument.Created.Ticks),
                         new HashEntry(DocumentFieldName, JsonConvert.SerializeObject(dataDocument))
                     });
-                await LatestEntryCache.KeyExpireAsync(keyname, _expireAfterTimeSpan,CommandFlags.FireAndForget);
+                await LatestEntryCache.KeyExpireAsync(keyname, _expireCacheItemAfterTimeSpan, CommandFlags.FireAndForget);
             }
         }
 
@@ -94,7 +95,7 @@ namespace Ruzzie.SensorData.Web.Cache
 
         public Task<int> PruneOldestItemCacheForItemsOlderThan(TimeSpan age)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(0);
         }
 
         public void ResetLatestEntryCache()
@@ -105,6 +106,11 @@ namespace Ruzzie.SensorData.Web.Cache
                 IServer server = _redis.GetServer(endPoint);
                 server.FlushDatabase();
             }
+        }
+
+        public void RemoveItemFromLatestEntryCache(string thingName)
+        {
+            LatestEntryCache.KeyDelete(CreateKeyForLatestEntry(thingName));
         }
     }
 }

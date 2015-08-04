@@ -12,7 +12,7 @@ namespace Ruzzie.SensorData.Web
             config.MapHttpAttributeRoutes();
 
             config.Formatters.Clear();
-            config.Formatters.Add(new JsonMediaTypeFormatter());//Todo: jil implementation
+            config.Formatters.Add(new JsonMediaTypeFormatter());
             config.Formatters.Add(new FormUrlEncodedMediaTypeFormatter());
             config.EnableCors(new EnableCorsAttribute("*", "*", "GET,POST"));
             //config.Formatters.Add(new XmlMediaTypeFormatter());

@@ -6,11 +6,11 @@ using StackExchange.Redis;
 
 namespace Ruzzie.SensorData.Web
 {
-    public class RedisPubSubUpdateSensorDocumentMessageChannel : IUpdateSensorDocumentMessageChannel
+    public class RedisPubSubCacheUpdateSensorDocumentMessageChannel : ICacheUpdateSensorDocumentMessageChannel
     {
         private readonly ISubscriber _subscriber;
 
-        public RedisPubSubUpdateSensorDocumentMessageChannel(ConnectionMultiplexer redis)
+        public RedisPubSubCacheUpdateSensorDocumentMessageChannel(ConnectionMultiplexer redis)
         {
             if (redis == null)
             {

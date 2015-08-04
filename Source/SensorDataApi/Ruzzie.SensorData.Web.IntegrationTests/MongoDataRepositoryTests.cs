@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -31,7 +32,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var sensorItemData = new SensorItemDataDocument
             {
                 Content = dataContent,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 ThingName = "SmokeTest3"
             };
 
@@ -53,12 +54,12 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var sensorItemData = new SensorItemDataDocument
             {
                 Content = dataContent,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 ThingName = "SmokeTest4"
             };
 
             _repository.CreateOrAdd(sensorItemData).Wait();
-
+            Thread.Sleep(100);
             long count = _repository.SensorItemDataCollection.CountAsync(doc => doc.ThingName == sensorItemData.ThingName).Result;
 
             Assert.That(count, Is.EqualTo(1));
@@ -87,7 +88,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var sensorItemData = new SensorItemDataDocument
             {
                 Content = dataContent,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 ThingName = "SerTest1"
             };
 
@@ -110,7 +111,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var sensorItemData = new SensorItemDataDocument
             {
                 Content = dataContent,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 ThingName = "SerTest1"
             };
 
@@ -139,7 +140,7 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var sensorItemData = new SensorItemDataDocument
             {
                 Content = dataContent,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 ThingName = "SerTest1"
             };
 

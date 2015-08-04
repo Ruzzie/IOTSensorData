@@ -6,15 +6,15 @@ using Ruzzie.SensorData.Web.Cache;
 
 namespace Ruzzie.SensorData.UnitTests
 {
-    public class WriteThroughCacheTestBase    
+    
+    public abstract class WriteThroughCacheTestBase    
     {
-
         public WriteThroughCacheTestBase(IWriteThroughCache cacheUnderTest)
         {
             _cache = cacheUnderTest;
         }
 
-        private readonly IWriteThroughCache _cache = new WriteThroughCacheLocal();
+        private readonly IWriteThroughCache _cache;
 
         protected IWriteThroughCache Cache
         {
@@ -25,7 +25,7 @@ namespace Ruzzie.SensorData.UnitTests
         public void GetCachedItemAfterStoring()
         {
             //Arrange
-            DateTime current = DateTime.Now;
+            DateTime current = DateTime.UtcNow;
             dynamic content = new DynamicObjectDictionary();
             content.Test = "TT";
             var document = new SensorItemDataDocument {Content = content, Created = current,ThingName = "SmokeTest1"};
@@ -43,7 +43,7 @@ namespace Ruzzie.SensorData.UnitTests
         public void GetCachedItemAfterStoringWithComplexObject()
         {
             //Arrange
-            DateTime current = DateTime.Now;
+            DateTime current = DateTime.UtcNow;
             dynamic content = new DynamicObjectDictionary();
             content.Test = "TT";
             content.SubInts = new[] {1, 2, 3};
@@ -103,7 +103,7 @@ namespace Ruzzie.SensorData.UnitTests
         public virtual void PruneCacheItemsOlderThanGivenValue()
         {
             //Arrange
-            DateTime current = DateTime.Now;
+            DateTime current = DateTime.UtcNow;
             var document = new SensorItemDataDocument { Content = new DynamicObjectDictionary(), Created = current, ThingName = "SmokeTest3" };
             Cache.Update(document).Wait();
 

@@ -14,21 +14,21 @@ namespace Ruzzie.SensorData.Web.PushData
 
         protected IDataWriteService DataWriteService { get; set; }
         
-        public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime,
+        public async Task<DataResult> PushData(string thingName, DateTime currentDateTime,
             IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
-            var result = new PushDataResult {Timestamp = currentDateTime};
+            var result = new DataResult {Timestamp = currentDateTime};
             result.ThingName = thingName;
 
             if (string.IsNullOrWhiteSpace(thingName))
             {
-                result.PushDataResultCode = PushDataResultCode.FailedThingNameNotProvided;
+                result.DataResultCode = DataResultCode.FailedThingNameNotProvided;
                 return result;
             }
 
             if (keyValuePairs == null)
             {
-                result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
+                result.DataResultCode = DataResultCode.FailedEmptyData;
                 return result;
             }
 
@@ -36,7 +36,7 @@ namespace Ruzzie.SensorData.Web.PushData
 
             if (keyValuePairsAsList.Count == 0)
             {
-                result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
+                result.DataResultCode = DataResultCode.FailedEmptyData;
                 return result;
             }
 
@@ -49,13 +49,13 @@ namespace Ruzzie.SensorData.Web.PushData
             return result;
         }
 
-        public async Task<PushDataResult> PushData(string thingName, DateTime currentDateTime, DynamicObjectDictionary content)
+        public async Task<DataResult> PushData(string thingName, DateTime currentDateTime, DynamicObjectDictionary content)
         {
-            var result = new PushDataResult {Timestamp = currentDateTime, ThingName = thingName};
+            var result = new DataResult {Timestamp = currentDateTime, ThingName = thingName};
 
             if (string.IsNullOrWhiteSpace(thingName))
             {
-                result.PushDataResultCode = PushDataResultCode.FailedThingNameNotProvided;
+                result.DataResultCode = DataResultCode.FailedThingNameNotProvided;
                 return result;
             }            
             
@@ -63,7 +63,7 @@ namespace Ruzzie.SensorData.Web.PushData
             {
                 if (content == null || content.MemberCount == 0)
                 {
-                    result.PushDataResultCode = PushDataResultCode.FailedEmptyData;
+                    result.DataResultCode = DataResultCode.FailedEmptyData;
                     return result;
                 }
 
@@ -74,7 +74,7 @@ namespace Ruzzie.SensorData.Web.PushData
             }
             catch (Exception e)
             {
-                result.PushDataResultCode = PushDataResultCode.UnexpectedError;
+                result.DataResultCode = DataResultCode.UnexpectedError;
                 result.ResultData = new DynamicObjectDictionary();
                 result.ResultData.ErrorMessage = e.Message;
                 return result;

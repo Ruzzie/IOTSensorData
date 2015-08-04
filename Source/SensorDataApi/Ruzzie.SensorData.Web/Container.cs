@@ -22,16 +22,16 @@ namespace Ruzzie.SensorData.Web
 
 
             Redis = CreateRedisConnectionMultiplexer();
-            IUpdateSensorDocumentMessageChannel updateSensorDocumentMessageChannel = new RedisPubSubUpdateSensorDocumentMessageChannel(Redis);
+            ICacheUpdateSensorDocumentMessageChannel cacheUpdateSensorDocumentMessageChannel = new RedisPubSubCacheUpdateSensorDocumentMessageChannel(Redis);
 
             ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoConnString);
-            WriteThroughLocalCache = new WriteThroughCacheLocal(updateSensorDocumentMessageChannel);
-            RedisWriteThroughCache = new WriteThroughRedisCache(Redis);
+            WriteThroughLocalCache = new WriteThroughCacheLocal(cacheUpdateSensorDocumentMessageChannel);
+            RedisWriteThroughCache = new WriteThroughRedisCache(Redis, 300);
 
             TimeSpan localCacheExpiry = new TimeSpan(0,0,5,0);
             PruneLocalCacheJob = new WebJob(localCacheExpiry, () => WriteThroughLocalCache.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry), HttpRuntime.Cache ?? new System.Web.Caching.Cache());
 
-            PushDataService = new PushDataService(new DataWriteServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo,updateSensorDocumentMessageChannel));
+            PushDataService = new PushDataService(new DataWriteServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo,cacheUpdateSensorDocumentMessageChannel));
 
             GetDataService = new GetDataService(new DataReadServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo));
         }

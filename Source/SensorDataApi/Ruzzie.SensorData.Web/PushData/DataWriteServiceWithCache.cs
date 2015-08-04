@@ -22,15 +22,15 @@ namespace Ruzzie.SensorData.Web.PushData
             TierTwoWriteThroughCache = tierTwoWriteThroughCache;            
         }
 
-        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo, IUpdateSensorDocumentMessageChannel updateUpdateSensorDocumentMessageChannel)
+        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo, ICacheUpdateSensorDocumentMessageChannel cacheUpdateCacheUpdateSensorDocumentMessageChannel)
             : this(tierOneWriteThroughCache, tierTwoWriteThroughCache, sensorItemDataRepositoryMongo)
         {
-            UpdateUpdateSensorDocumentMessageChannel = updateUpdateSensorDocumentMessageChannel;            
+            CacheUpdateCacheUpdateSensorDocumentMessageChannel = cacheUpdateCacheUpdateSensorDocumentMessageChannel;            
         }
 
         protected IWriteThroughCache TierOneWriteThroughCache { get; set; }
         protected IWriteThroughCache TierTwoWriteThroughCache { get; set; }
-        protected IUpdateSensorDocumentMessageChannel UpdateUpdateSensorDocumentMessageChannel { get; set; }
+        protected ICacheUpdateSensorDocumentMessageChannel CacheUpdateCacheUpdateSensorDocumentMessageChannel { get; set; }
 
         public async Task CreateOrUpdateDataForThing(string thingName, DateTime timestamp, dynamic data)
         {
@@ -44,7 +44,7 @@ namespace Ruzzie.SensorData.Web.PushData
             await
                 Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument),
                     Task.WhenAll(TierOneWriteThroughCache.Update(dataDocument),
-                        TierTwoWriteThroughCache.Update(dataDocument).ContinueWith(task => UpdateUpdateSensorDocumentMessageChannel.Publish(thingName)))
+                        TierTwoWriteThroughCache.Update(dataDocument).ContinueWith(task => CacheUpdateCacheUpdateSensorDocumentMessageChannel.Publish(thingName)))
                     );
         }
     }

@@ -7,8 +7,6 @@ using System.Web.Http;
 using Microsoft.Owin.Testing;
 using NUnit.Framework;
 using Owin;
-using Ruzzie.SensorData.Web.GetData;
-using Ruzzie.SensorData.Web.PushData;
 
 namespace Ruzzie.SensorData.Web
 {
@@ -51,9 +49,9 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var response = _server.HttpClient.GetAsync("/pushdata/for/IntTest?Temperature=2").Result;
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             
-            var resultObject = response.Content.ReadAsAsync<PushDataResult>().Result;
+            var resultObject = response.Content.ReadAsAsync<DataResult>().Result;
 
-            Assert.That(resultObject.PushDataResultCode, Is.EqualTo(PushDataResultCode.Success));
+            Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.Success));
             Assert.That(resultObject.ResultData.Temperature, Is.EqualTo("2"));            
         }
 
@@ -63,9 +61,9 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var response = _server.HttpClient.GetAsync("/pushdata/for/IntTest2?").Result;
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-            var resultObject = response.Content.ReadAsAsync<PushDataResult>().Result;
+            var resultObject = response.Content.ReadAsAsync<DataResult>().Result;
 
-            Assert.That(resultObject.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedEmptyData));            
+            Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.FailedEmptyData));            
         }
 
         [Test]
@@ -74,9 +72,9 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var response = _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest3", new {Temperature = "22"}).Result;
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK),response.Content.ReadAsStringAsync().Result);
 
-            var resultObject = response.Content.ReadAsAsync<PushDataResult>().Result;
+            var resultObject = response.Content.ReadAsAsync<DataResult>().Result;
 
-            Assert.That(resultObject.PushDataResultCode, Is.EqualTo(PushDataResultCode.Success));
+            Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.Success));
             Assert.That(resultObject.ResultData.Temperature, Is.EqualTo("22"));
         }
 
@@ -86,9 +84,9 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             var response = _server.HttpClient.PostAsync("/pushdata/for/IntTest4", new{},new JsonMediaTypeFormatter()).Result;
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-            var resultObject = response.Content.ReadAsAsync<PushDataResult>().Result;
+            var resultObject = response.Content.ReadAsAsync<DataResult>().Result;
 
-            Assert.That(resultObject.PushDataResultCode, Is.EqualTo(PushDataResultCode.FailedEmptyData));            
+            Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.FailedEmptyData));            
         }
 
         [Test]
@@ -97,9 +95,9 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
             _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest5", new { Temperature = "22" }).Wait();
             _server.HttpClient.PostAsJsonAsync("/pushdata/for/IntTest5", new { Temperature = "22.5" }).Wait();
 
-            var resultObject = _server.HttpClient.GetAsync("/get/latest/data/for/IntTest5").Result.Content.ReadAsAsync<GetDataResult>().Result;            
+            var resultObject = _server.HttpClient.GetAsync("/get/latest/data/for/IntTest5").Result.Content.ReadAsAsync<DataResult>().Result;            
 
-            Assert.That(resultObject.GetDataResultCode, Is.EqualTo(GetDataResultCode.Success));
+            Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.Success));
             Assert.That(resultObject.ResultData.Temperature, Is.EqualTo("22.5"));
         }
 
@@ -142,11 +140,11 @@ namespace Ruzzie.SensorData.Web.IntegrationTests
         [Test]
         public void GetData_For_Non_Existant_Thing_Should_Fail()
         {
-            var response = _server.HttpClient.GetAsync("/get/latest/data/for/"+new Guid()).Result;
+            var response = _server.HttpClient.GetAsync("/get/latest/data/for/"+Guid.NewGuid()).Result;
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            var resultObject = response.Content.ReadAsAsync<GetDataResult>().Result;
+            var resultObject = response.Content.ReadAsAsync<DataResult>().Result;
 
-            Assert.That(resultObject.GetDataResultCode, Is.EqualTo(GetDataResultCode.FailedThingNotFound));            
+            Assert.That(resultObject.DataResultCode, Is.EqualTo(DataResultCode.FailedThingNotFound));            
         }
 
 

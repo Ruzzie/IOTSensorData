@@ -12,12 +12,12 @@ namespace Ruzzie.SensorData.Web.GetData
 
         protected IDataReadService DataReadService { get; set; }      
 
-        public async Task<GetDataResult> GetLatestDataEntryForThing(string thingName)
+        public async Task<DataResult> GetLatestDataEntryForThing(string thingName)
         {
-            var result = new GetDataResult {ThingName = thingName};
+            var result = new DataResult {ThingName = thingName};
             if (string.IsNullOrWhiteSpace(thingName))
             {
-                result.GetDataResultCode = GetDataResultCode.FailedThingNameNotProvided;
+                result.DataResultCode = DataResultCode.FailedThingNameNotProvided;
                 return result;                
             }
 
@@ -25,32 +25,32 @@ namespace Ruzzie.SensorData.Web.GetData
 
             if (dataDocument == null)
             {
-                result.GetDataResultCode = GetDataResultCode.FailedThingNotFound;
+                result.DataResultCode = DataResultCode.FailedThingNotFound;
                 return result;
             }
 
-            result.GetDataResultCode = GetDataResultCode.Success;
+            result.DataResultCode = DataResultCode.Success;
             result.ResultData = dataDocument.Content;
             result.Timestamp = dataDocument.Created;            
             return result;
         }
 
-        public async Task<GetDataResult> GetLatestSingleValueForThing(string thingName, string valueName)
+        public async Task<DataResult> GetLatestSingleValueForThing(string thingName, string valueName)
         {
             if (string.IsNullOrWhiteSpace(valueName))
             {
-                return new GetDataResult {GetDataResultCode = GetDataResultCode.ValueNameNotProvided};
+                return new DataResult {DataResultCode = DataResultCode.ValueNameNotProvided};
             }
 
             var result = await GetLatestDataEntryForThing(thingName);
-            if (result.GetDataResultCode != GetDataResultCode.Success)
+            if (result.DataResultCode != DataResultCode.Success)
             {
                 return result;
             }
 
             if (! ((IDictionary<string,dynamic>) result.ResultData).ContainsKey(valueName))
             {
-                return new GetDataResult {GetDataResultCode = GetDataResultCode.ValueNameNotFound};
+                return new DataResult {DataResultCode = DataResultCode.ValueNameNotFound};
             }
 
             result.ResultData = result.ResultData[valueName];

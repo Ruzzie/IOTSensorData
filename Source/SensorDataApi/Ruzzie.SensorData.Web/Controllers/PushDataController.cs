@@ -15,10 +15,10 @@ namespace Ruzzie.SensorData.Web.Controllers
         ///     Push data for a thing with querystring parameters.
         /// </summary>
         /// <param name="thing">A unique name of a thing. It is recommended that you use a GUID as to avoid name collisions.</param>
-        /// <returns></returns>
-        public async Task<PushDataResult> Get(string thing)
+        /// <returns><see cref="DataResult"/></returns>
+        public async Task<DataResult> Get(string thing)
         {
-            return await PushDataService.PushData(thing, DateTime.Now, Request.GetQueryNameValuePairs());
+            return await PushDataService.PushData(thing, DateTime.UtcNow, Request.GetQueryNameValuePairs());
         }
 
         
@@ -27,10 +27,10 @@ namespace Ruzzie.SensorData.Web.Controllers
         /// </summary>
         /// <param name="thing">A unique name of a thing. It is recommended that you use a GUID as to avoid name collisions.</param>
         /// <param name="content">The actual content of the string. Can be any valid JSON string.</param>
-        /// <returns></returns>
-        public async Task<PushDataResult> Post(string thing, [FromBody] DynamicObjectDictionary content)
+        /// <returns><see cref="DataResult"/></returns>
+        public async Task<DataResult> Post(string thing, [FromBody] DynamicObjectDictionary content)
         {
-            return await PushDataService.PushData(thing, DateTime.Now, content);
+            return await PushDataService.PushData(thing, DateTime.UtcNow, content);
         }
     }
 }
