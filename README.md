@@ -26,6 +26,7 @@ A simple store API for IOT. Inspired by dweet.io but the need for control over t
 - [x] Caching of latest data
 - [x] Retrieving latest data
 - [x] Improve serialization performance of dynamic type for caching (good enough for now)
+- [x] Batch posting of data
 - [ ] Create an overview page of Items
 - [ ] Export data for a timeperiod for an item
 - [ ] Create pipeline for data processing
