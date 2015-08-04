@@ -41,9 +41,10 @@ namespace Ruzzie.SensorData.Web.GetData
         }
 
         private async Task<SensorItemDataDocument> StoreDocumentInCacheIfNotNull(Task<SensorItemDataDocument> getLatest)
-        {            
-            await Task.WhenAny(TierOneWriteThroughCache.Update(await getLatest),TierTwoWriteThroughCache.Update(await getLatest));
-            return await getLatest;
+        {
+            SensorItemDataDocument sensorItemDataDocument = await getLatest;
+            await Task.WhenAny(TierOneWriteThroughCache.Update(sensorItemDataDocument),TierTwoWriteThroughCache.Update(sensorItemDataDocument));
+            return sensorItemDataDocument;
         }
     }
 }
