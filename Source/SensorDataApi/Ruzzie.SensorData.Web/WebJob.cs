@@ -17,7 +17,7 @@ namespace Ruzzie.SensorData.Web
             JobId = Guid.NewGuid().ToString();
         }
 
-        public string JobId { get; }
+        public string JobId { get; private set; }
 
         public void Start()
         {
