@@ -79,6 +79,13 @@ namespace Ruzzie.SensorData.Web
             return InternalMembers.TryUpdate((string) indexes[0], value, CreateOrAddMember((string) indexes[0]));
         }
 
+        /// <summary>
+        ///     Get a property via the index. Only indexes[0] as a string will be used.
+        /// </summary>
+        /// <param name="binder"></param>
+        /// <param name="indexes">Only [0] will be used as string.</param>
+        /// <param name="result">The value of index 0</param>
+        /// <returns>true if successful; otherwise false.</returns>
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
             result = CreateOrAddMember((string) indexes[0]);
