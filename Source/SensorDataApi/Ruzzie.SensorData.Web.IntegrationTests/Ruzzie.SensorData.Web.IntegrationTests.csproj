@@ -125,6 +125,10 @@
       <Project>{D95F5DE0-7648-439E-AAE7-9A7665555BF9}</Project>
       <Name>Ruzzie.SensorData.Web</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Ruzzie.SensorData\Ruzzie.SensorData.csproj">
+      <Project>{a6d53f47-283d-4d5e-b193-1291b5cd2011}</Project>
+      <Name>Ruzzie.SensorData</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

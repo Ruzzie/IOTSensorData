@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Ruzzie.SensorData.PushData;
+using Ruzzie.SensorData.Repository;
 using Ruzzie.SensorData.Web;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.PushData;

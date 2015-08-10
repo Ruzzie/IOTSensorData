@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Ruzzie.SensorData.Web.GetData
+namespace Ruzzie.SensorData.GetData
 {
     public interface IDataReadService
     {

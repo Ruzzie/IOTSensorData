@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ruzzie.SensorData.GetData;
 
 namespace Ruzzie.SensorData.Web.GetData
 {

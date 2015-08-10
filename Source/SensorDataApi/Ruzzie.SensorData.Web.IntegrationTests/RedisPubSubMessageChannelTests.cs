@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using NUnit.Framework;
+using Ruzzie.SensorData.Cache;
 
 namespace Ruzzie.SensorData.Web.IntegrationTests
 {

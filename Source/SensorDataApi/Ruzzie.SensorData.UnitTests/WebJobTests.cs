@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Web;
-using System.Web.Caching;
 using NUnit.Framework;
 using Ruzzie.SensorData.Web;
 
@@ -13,7 +12,7 @@ namespace Ruzzie.SensorData.UnitTests
         [Test]
         public void CallCallbackEveryInterval()
         {
-            Cache cache = HttpRuntime.Cache ?? new Cache();
+            System.Web.Caching.Cache cache = HttpRuntime.Cache ?? new System.Web.Caching.Cache();
 
             int executeCounter = 0;
             Action actionToExecute = () => executeCounter++;
