@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ruzzie.SensorData
 {
@@ -7,8 +8,9 @@ namespace Ruzzie.SensorData
     {
         public string ThingName { get; set; }
         public DateTime Created { get; set; }
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public string Id { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public DynamicObjectDictionary Content { get; set; }                
     }
 }
