@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
-using Ruzzie.SensorData.Web.Cache;
+using Ruzzie.SensorData.Cache;
 using Ruzzie.SensorData.Web.GetData;
 using Ruzzie.SensorData.Web.PushData;
 

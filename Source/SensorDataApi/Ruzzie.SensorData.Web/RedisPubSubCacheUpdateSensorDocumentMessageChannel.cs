@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using Ruzzie.SensorData.Cache;
 using Ruzzie.SensorData.Web.Cache;
 using StackExchange.Redis;
 
@@ -45,7 +46,7 @@ namespace Ruzzie.SensorData.Web
 
     public class UpdateSensorDocumentMessage
     {
-        private const string Format = "{0};;;{1}";
+        private const string MessageFormat = "{0};;;{1}";
         public string ThingName { get; set; }
         public string SenderId { get; set; }
 
@@ -55,25 +56,25 @@ namespace Ruzzie.SensorData.Web
             ThingName = thingName;
         }
 
-        public static UpdateSensorDocumentMessage FromString(string value)
+        public static UpdateSensorDocumentMessage FromString(string message)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(message))
             {
-                throw new ArgumentException("Null or empty","value");
+                throw new ArgumentException("Null or empty","message");
             }
 
-            string[] strings = value.Split(new[] {";;;"}, StringSplitOptions.RemoveEmptyEntries);
-            if (strings.Length != 2)
+            string[] messageParts = message.Split(new[] {";;;"}, StringSplitOptions.RemoveEmptyEntries);
+            if (messageParts.Length != 2)
             {
-                throw new ArgumentException("Incorrect format.","value");
+                throw new ArgumentException("Incorrect format.","message");
             }
 
-            return new UpdateSensorDocumentMessage(strings[0],strings[1]);
+            return new UpdateSensorDocumentMessage(messageParts[0],messageParts[1]);
         }
 
         public static string CreateMessage(string senderId, string thingName)
         {
-            return string.Format(CultureInfo.InvariantCulture, Format, senderId, thingName);
+            return string.Format(CultureInfo.InvariantCulture, MessageFormat, senderId, thingName);
         }
 
         public override string ToString()

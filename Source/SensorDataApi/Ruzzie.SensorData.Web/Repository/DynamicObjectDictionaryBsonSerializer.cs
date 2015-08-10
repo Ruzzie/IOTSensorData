@@ -8,7 +8,7 @@ using MongoDB.Bson.Serialization.Serializers;
 
 namespace Ruzzie.SensorData.Web.Repository
 {
-    public class DynamicObjectDictionarySerializer : DynamicDocumentBaseSerializer<DynamicObjectDictionary>,
+    public class DynamicObjectDictionaryBsonSerializer : DynamicDocumentBaseSerializer<DynamicObjectDictionary>,
         IBsonSerializer<DynamicObjectDictionary>
     {
         private static readonly IBsonSerializer<BsonDocument> BsonDocumentSerializer = BsonSerializer.LookupSerializer<BsonDocument>();
@@ -68,11 +68,21 @@ namespace Ruzzie.SensorData.Web.Repository
 
         protected override void SetValueForMember(DynamicObjectDictionary document, string memberName, object value)
         {
+            if (document == null)
+            {
+                throw new ArgumentNullException("document");
+            }
+
             ((IDictionary<string, object>) document)[memberName] = value;
         }
 
         protected override bool TryGetValueForMember(DynamicObjectDictionary document, string memberName, out object value)
         {
+            if (document == null)
+            {
+                throw new ArgumentNullException("document");
+            }
+
             return ((IDictionary<string, object>) document).TryGetValue(memberName, out value);
         }
     }

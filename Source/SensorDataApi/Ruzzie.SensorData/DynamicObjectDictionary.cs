@@ -4,8 +4,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace Ruzzie.SensorData.Web
-{   
+namespace Ruzzie.SensorData
+{
+
     [Serializable]
     public sealed class DynamicObjectDictionary : DynamicObject, IDictionary<string,object>
     {
@@ -30,6 +31,11 @@ namespace Ruzzie.SensorData.Web
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
+            if (binder == null)
+            {
+                throw new ArgumentNullException("binder");
+            }
+
             result = CreateOrAddMember(binder.Name);
             return true;
         }
@@ -64,6 +70,11 @@ namespace Ruzzie.SensorData.Web
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
+            if (binder == null)
+            {
+                throw new ArgumentNullException("binder");
+            }
+
             return InternalMembers.TryUpdate(binder.Name, value, CreateOrAddMember(binder.Name));
         }
 
@@ -76,6 +87,12 @@ namespace Ruzzie.SensorData.Web
         /// <returns>true if successful; otherwise false.</returns>
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
+          
+            if (indexes == null)
+            {
+                throw new ArgumentNullException("indexes");
+            }
+
             return InternalMembers.TryUpdate((string) indexes[0], value, CreateOrAddMember((string) indexes[0]));
         }
 
@@ -88,6 +105,11 @@ namespace Ruzzie.SensorData.Web
         /// <returns>true if successful; otherwise false.</returns>
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
+            if (indexes == null)
+            {
+                throw new ArgumentNullException("indexes");
+            }
+
             result = CreateOrAddMember((string) indexes[0]);
             return true;
         }

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Ruzzie.SensorData.Web.Cache;
-using Ruzzie.SensorData.Web.Repository;
+using Ruzzie.SensorData.Cache;
+using Ruzzie.SensorData.Repository;
 
-namespace Ruzzie.SensorData.Web.PushData
+namespace Ruzzie.SensorData.PushData
 {
-    public interface IDataWriteService
-    {
-        Task CreateOrUpdateDataForThing(string thingName, DateTime timestamp, dynamic data);
-    }
-
     public class DataWriteServiceWithCache : IDataWriteService
     {
         

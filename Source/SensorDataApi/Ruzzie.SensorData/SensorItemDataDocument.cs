@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ruzzie.SensorData.Web
+namespace Ruzzie.SensorData
 {
     [Serializable]  
     public class SensorItemDataDocument
@@ -8,6 +8,7 @@ namespace Ruzzie.SensorData.Web
         public string ThingName { get; set; }
         public DateTime Created { get; set; }
         public string Id { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public DynamicObjectDictionary Content { get; set; }                
     }
 }

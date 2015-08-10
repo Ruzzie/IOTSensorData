@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using Ruzzie.SensorData.GetData;
 using Ruzzie.SensorData.Web;
 using Ruzzie.SensorData.Web.GetData;
 

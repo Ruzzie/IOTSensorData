@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Ruzzie.SensorData.Cache;
 using StackExchange.Redis;
 
 namespace Ruzzie.SensorData.Web.Cache
