@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Ruzzie.SensorData.Web
+namespace Ruzzie.SensorData.Cache
 {
     public interface ICacheUpdateSensorDocumentMessageChannel
     {

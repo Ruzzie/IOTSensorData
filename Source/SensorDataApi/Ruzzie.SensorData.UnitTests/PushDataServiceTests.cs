@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
+using Ruzzie.SensorData.Cache;
+using Ruzzie.SensorData.PushData;
+using Ruzzie.SensorData.Repository;
 using Ruzzie.SensorData.Web;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.PushData;
-using Ruzzie.SensorData.Web.Repository;
 
 namespace Ruzzie.SensorData.UnitTests
 {    
@@ -15,8 +18,9 @@ namespace Ruzzie.SensorData.UnitTests
         [SetUp]
         public void SetUp()
         {
-            ISensorItemDataRepository repository = new Moq.Mock<ISensorItemDataRepository>().Object;
-            _pushDataService = new PushDataService(new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository));
+            ISensorItemDataRepository repository = new Mock<ISensorItemDataRepository>().Object;
+            ICacheUpdateSensorDocumentMessageChannel updateChannel = new Mock<ICacheUpdateSensorDocumentMessageChannel>().Object;
+            _pushDataService = new PushDataService(new DataWriteServiceWithCache(new WriteThroughCacheLocal(), new WriteThroughCacheLocal(), repository, updateChannel));
         }
 
         [TestFixture]

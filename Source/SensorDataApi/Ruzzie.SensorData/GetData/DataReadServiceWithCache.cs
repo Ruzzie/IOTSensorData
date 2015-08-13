@@ -1,16 +1,16 @@
 ﻿using System.Threading.Tasks;
-using Ruzzie.SensorData.Web.Cache;
-using Ruzzie.SensorData.Web.Repository;
+using Ruzzie.SensorData.Cache;
+using Ruzzie.SensorData.Repository;
 
-namespace Ruzzie.SensorData.Web.GetData
+namespace Ruzzie.SensorData.GetData
 {
     public class DataReadServiceWithCache : IDataReadService
     {
-        private readonly ISensorItemDataRepository _sensorItemDataRepositoryMongo;
+        private readonly ISensorItemDataRepository _sensorItemDataRepository;
 
-        public DataReadServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
+        public DataReadServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepository)
         {
-            _sensorItemDataRepositoryMongo = sensorItemDataRepositoryMongo;
+            _sensorItemDataRepository = sensorItemDataRepository;
             TierOneWriteThroughCache = tierOneWriteThroughCache;
             TierTwoWriteThroughCache = tierTwoWriteThroughCache;
         }
@@ -37,7 +37,7 @@ namespace Ruzzie.SensorData.Web.GetData
                 return itemFromCache;
             }                     
             //3. read from real datastore
-            return await StoreDocumentInCacheIfNotNull(_sensorItemDataRepositoryMongo.GetLatest(thingName));
+            return await StoreDocumentInCacheIfNotNull(_sensorItemDataRepository.GetLatest(thingName));
         }
 
         private async Task<SensorItemDataDocument> StoreDocumentInCacheIfNotNull(Task<SensorItemDataDocument> getLatest)

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+using Ruzzie.SensorData.Cache;
 
 namespace Ruzzie.SensorData.Web.Cache
 {
@@ -48,8 +49,7 @@ namespace Ruzzie.SensorData.Web.Cache
                         return dataDocument;
                     }
                     return oldValue;
-                });
-                
+                });                
             });
         }
 

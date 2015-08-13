@@ -2,15 +2,10 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
+using Ruzzie.SensorData.Repository;
 
 namespace Ruzzie.SensorData.Web.Repository
 {
-    public interface ISensorItemDataRepository
-    {
-        Task CreateOrAdd(SensorItemDataDocument sensorItemData);
-        Task<SensorItemDataDocument> GetLatest(string thingName);
-    }
-
     public class SensorItemDataRepositoryMongo : ISensorItemDataRepository
     {
         private IMongoDatabase _mongoDatabase;
