@@ -49,7 +49,7 @@ namespace Ruzzie.SensorData.Web.Cache
             //else return current            
             string keyname = CreateKeyForLatestEntry(dataDocument);
             RedisValue lastModified = await LatestEntryCache.HashGetAsync(keyname, LastModifiedFieldName);
-
+           
             if (((long) lastModified) < dataDocument.Created.Ticks)
             {
                 await LatestEntryCache.HashSetAsync(
@@ -58,8 +58,10 @@ namespace Ruzzie.SensorData.Web.Cache
                     {
                         new HashEntry(LastModifiedFieldName, dataDocument.Created.Ticks),
                         new HashEntry(DocumentFieldName, JsonConvert.SerializeObject(dataDocument))
-                    });
-                await LatestEntryCache.KeyExpireAsync(keyname, _expireCacheItemAfterTimeSpan, CommandFlags.FireAndForget);
+                    })
+                    .ContinueWith(
+                        task => LatestEntryCache.KeyExpireAsync(keyname, _expireCacheItemAfterTimeSpan, CommandFlags.FireAndForget)
+                    );
             }
         }
 

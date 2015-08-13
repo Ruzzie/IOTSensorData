@@ -7,20 +7,17 @@ namespace Ruzzie.SensorData.PushData
 {
     public class DataWriteServiceWithCache : IDataWriteService
     {
-        
+
         private readonly ISensorItemDataRepository _sensorItemDataRepositoryMongo;
 
-        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo)
+        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache,
+            ISensorItemDataRepository sensorItemDataRepositoryMongo,
+            ICacheUpdateSensorDocumentMessageChannel cacheUpdateCacheUpdateSensorDocumentMessageChannel)
         {
             _sensorItemDataRepositoryMongo = sensorItemDataRepositoryMongo;
             TierOneWriteThroughCache = tierOneWriteThroughCache;
-            TierTwoWriteThroughCache = tierTwoWriteThroughCache;            
-        }
-
-        public DataWriteServiceWithCache(IWriteThroughCache tierOneWriteThroughCache, IWriteThroughCache tierTwoWriteThroughCache, ISensorItemDataRepository sensorItemDataRepositoryMongo, ICacheUpdateSensorDocumentMessageChannel cacheUpdateCacheUpdateSensorDocumentMessageChannel)
-            : this(tierOneWriteThroughCache, tierTwoWriteThroughCache, sensorItemDataRepositoryMongo)
-        {
-            CacheUpdateCacheUpdateSensorDocumentMessageChannel = cacheUpdateCacheUpdateSensorDocumentMessageChannel;            
+            TierTwoWriteThroughCache = tierTwoWriteThroughCache;
+            CacheUpdateCacheUpdateSensorDocumentMessageChannel = cacheUpdateCacheUpdateSensorDocumentMessageChannel;
         }
 
         protected IWriteThroughCache TierOneWriteThroughCache { get; set; }
@@ -34,12 +31,12 @@ namespace Ruzzie.SensorData.PushData
             dataDocument.Created = timestamp;
             dataDocument.Content = data;
 
-          
             //1. store for real TODO:ERROR HANDLING!            
             await
                 Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument),
                     Task.WhenAll(TierOneWriteThroughCache.Update(dataDocument),
-                        TierTwoWriteThroughCache.Update(dataDocument).ContinueWith(task => CacheUpdateCacheUpdateSensorDocumentMessageChannel.Publish(thingName)))
+                        TierTwoWriteThroughCache.Update(dataDocument)
+                            .ContinueWith(task => CacheUpdateCacheUpdateSensorDocumentMessageChannel.Publish(thingName)))
                     );
         }
     }

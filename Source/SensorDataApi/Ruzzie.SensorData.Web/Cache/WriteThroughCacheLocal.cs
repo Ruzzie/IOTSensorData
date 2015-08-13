@@ -49,8 +49,7 @@ namespace Ruzzie.SensorData.Web.Cache
                         return dataDocument;
                     }
                     return oldValue;
-                });
-                
+                });                
             });
         }
 
