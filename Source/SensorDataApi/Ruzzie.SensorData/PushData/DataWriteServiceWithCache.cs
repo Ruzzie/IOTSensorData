@@ -31,13 +31,18 @@ namespace Ruzzie.SensorData.PushData
             dataDocument.Created = timestamp;
             dataDocument.Content = data;
 
-            //1. store for real TODO:ERROR HANDLING!            
-            await
-                Task.WhenAny(_sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument),
-                    Task.WhenAll(TierOneWriteThroughCache.Update(dataDocument),
-                        TierTwoWriteThroughCache.Update(dataDocument)
-                            .ContinueWith(task => CacheUpdateCacheUpdateSensorDocumentMessageChannel.Publish(thingName)))
-                    );
+            //1. store for real TODO:ERROR HANDLING! 
+            Task updateDatabaseTask = _sensorItemDataRepositoryMongo.CreateOrAdd(dataDocument);
+            
+
+            Task updateLocalCacheTask = TierOneWriteThroughCache.Update(dataDocument);
+           
+
+            Task updateDistributedCacheTask = TierTwoWriteThroughCache.Update(dataDocument)
+                            .ContinueWith(task => CacheUpdateCacheUpdateSensorDocumentMessageChannel.Publish(thingName));
+           
+
+            await Task.WhenAll(updateDatabaseTask, updateLocalCacheTask, updateDistributedCacheTask);        
         }
     }
 }
