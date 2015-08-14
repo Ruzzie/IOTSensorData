@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.Web;
+using Akka.Actor;
 using Ruzzie.SensorData.Cache;
 using Ruzzie.SensorData.GetData;
-using Ruzzie.SensorData.PushData;
 using Ruzzie.SensorData.Repository;
 using Ruzzie.SensorData.Web.Cache;
 using Ruzzie.SensorData.Web.GetData;
@@ -17,6 +17,7 @@ namespace Ruzzie.SensorData.Web
     {
         internal static readonly string MongoConnString;
         internal static readonly string RedisConnString;
+      
 
         static Container()
         {
@@ -35,9 +36,19 @@ namespace Ruzzie.SensorData.Web
             TimeSpan localCacheExpiry = new TimeSpan(0,0,5,0);
             PruneLocalCacheJob = new WebJob(localCacheExpiry, () => WriteThroughLocalCache.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry), HttpRuntime.Cache ?? new System.Web.Caching.Cache());
 
-            PushDataService = new PushDataService(new DataWriteServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo,cacheUpdateSensorDocumentMessageChannel));
-
             GetDataService = new GetDataService(new DataReadServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo));
+
+            ActorSystem = ActorSystem.Create("RuzzieSensorDataActorSystem");
+            var updateDatabaseActorRef = ActorSystem.ActorOf(Props.Create(() => new UpdateDatabaseActor(sensorItemDataRepositoryMongo)));
+            var updateLocalCacheActorRef = ActorSystem.ActorOf(Props.Create(() => new UpdateLocalCacheActor(WriteThroughLocalCache)));
+            var updateDistributedCacheActorRef = ActorSystem.ActorOf(
+                Props.Create(() => new UpdateDistributedCacheActor(RedisWriteThroughCache, cacheUpdateSensorDocumentMessageChannel)));
+
+            UpdateSensorDataActorRef = ActorSystem.ActorOf(
+                Props.Create(
+                    () => new UpdateSensorDataActor(updateDatabaseActorRef, updateLocalCacheActorRef, updateDistributedCacheActorRef)));
+
+            PushDataService = new PushDataService(UpdateSensorDataActorRef);
         }
 
         private static ConnectionMultiplexer CreateRedisConnectionMultiplexer()
@@ -46,6 +57,9 @@ namespace Ruzzie.SensorData.Web
             redis.PreserveAsyncOrder = false;
             return redis;
         }
+
+        public static ActorSystem ActorSystem { get; private set; }
+        public static IActorRef UpdateSensorDataActorRef { get; private set; }
 
         public static IPushDataService PushDataService { get; private set; }
         public static IGetDataService GetDataService { get; private set; }

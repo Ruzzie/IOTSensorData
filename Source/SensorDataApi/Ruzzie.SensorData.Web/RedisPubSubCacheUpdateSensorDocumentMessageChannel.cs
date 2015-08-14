@@ -26,7 +26,7 @@ namespace Ruzzie.SensorData.Web
 
         public async Task Publish(string thingName)
         {
-            string message =  UpdateSensorDocumentMessage.CreateMessage(SenderId,thingName);
+            string message =  UpdateCacheSensorDocumentMessage.CreateMessage(SenderId,thingName);
 
             await _subscriber.PublishAsync(MessageChannelNames.UpdateLatestThingNotifications, message, CommandFlags.FireAndForget);
         }
@@ -35,7 +35,7 @@ namespace Ruzzie.SensorData.Web
         {
             await _subscriber.SubscribeAsync(MessageChannelNames.UpdateLatestThingNotifications, (channel, value) =>
             {
-                UpdateSensorDocumentMessage message = UpdateSensorDocumentMessage.FromString(value);
+                UpdateCacheSensorDocumentMessage message = UpdateCacheSensorDocumentMessage.FromString(value);
                 if (message.SenderId != SenderId)
                 {
                     callback.Invoke(message.ThingName);
@@ -44,19 +44,19 @@ namespace Ruzzie.SensorData.Web
         }                
     }
 
-    public class UpdateSensorDocumentMessage
+    public class UpdateCacheSensorDocumentMessage
     {
         private const string MessageFormat = "{0};;;{1}";
         public string ThingName { get; set; }
         public string SenderId { get; set; }
 
-        public UpdateSensorDocumentMessage(string senderId, string thingName)
+        public UpdateCacheSensorDocumentMessage(string senderId, string thingName)
         {
             SenderId = senderId;
             ThingName = thingName;
         }
 
-        public static UpdateSensorDocumentMessage FromString(string message)
+        public static UpdateCacheSensorDocumentMessage FromString(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -69,7 +69,7 @@ namespace Ruzzie.SensorData.Web
                 throw new ArgumentException("Incorrect format.","message");
             }
 
-            return new UpdateSensorDocumentMessage(messageParts[0],messageParts[1]);
+            return new UpdateCacheSensorDocumentMessage(messageParts[0],messageParts[1]);
         }
 
         public static string CreateMessage(string senderId, string thingName)
