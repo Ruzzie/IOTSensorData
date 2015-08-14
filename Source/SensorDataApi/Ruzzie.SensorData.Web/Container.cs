@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Web;
 using Akka.Actor;
+using Akka.Event;
 using Ruzzie.SensorData.Cache;
 using Ruzzie.SensorData.GetData;
 using Ruzzie.SensorData.Repository;
@@ -21,34 +22,47 @@ namespace Ruzzie.SensorData.Web
 
         static Container()
         {
-            MongoClassMapBootstrap.Register();
-            MongoConnString = ConfigurationManager.AppSettings["mongodbconnectionstring"];
-            RedisConnString = ConfigurationManager.AppSettings["redisconnectionstring"];
+            try
+            {
+                MongoClassMapBootstrap.Register();
+                MongoConnString = ConfigurationManager.AppSettings["mongodbconnectionstring"];
+                RedisConnString = ConfigurationManager.AppSettings["redisconnectionstring"];
 
 
-            Redis = CreateRedisConnectionMultiplexer();
-            ICacheUpdateSensorDocumentMessageChannel cacheUpdateSensorDocumentMessageChannel = new RedisPubSubCacheUpdateSensorDocumentMessageChannel(Redis);
+                Redis = CreateRedisConnectionMultiplexer();
+                ICacheUpdateSensorDocumentMessageChannel cacheUpdateSensorDocumentMessageChannel =
+                    new RedisPubSubCacheUpdateSensorDocumentMessageChannel(Redis);
 
-            ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoConnString);
-            WriteThroughLocalCache = new WriteThroughCacheLocal(cacheUpdateSensorDocumentMessageChannel);
-            RedisWriteThroughCache = new WriteThroughRedisCache(Redis, 600);
+                ISensorItemDataRepository sensorItemDataRepositoryMongo = new SensorItemDataRepositoryMongo(MongoConnString);
+                WriteThroughLocalCache = new WriteThroughCacheLocal(cacheUpdateSensorDocumentMessageChannel);
+                RedisWriteThroughCache = new WriteThroughRedisCache(Redis, 600);
 
-            TimeSpan localCacheExpiry = new TimeSpan(0,0,5,0);
-            PruneLocalCacheJob = new WebJob(localCacheExpiry, () => WriteThroughLocalCache.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry), HttpRuntime.Cache ?? new System.Web.Caching.Cache());
+                TimeSpan localCacheExpiry = new TimeSpan(0, 0, 5, 0);
+                PruneLocalCacheJob = new WebJob(localCacheExpiry,
+                    () => WriteThroughLocalCache.PruneOldestItemCacheForItemsOlderThan(localCacheExpiry),
+                    HttpRuntime.Cache ?? new System.Web.Caching.Cache());
 
-            GetDataService = new GetDataService(new DataReadServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache, sensorItemDataRepositoryMongo));
+                GetDataService =
+                    new GetDataService(new DataReadServiceWithCache(WriteThroughLocalCache, RedisWriteThroughCache,
+                        sensorItemDataRepositoryMongo));
 
-            ActorSystem = ActorSystem.Create("RuzzieSensorDataActorSystem");
-            var updateDatabaseActorRef = ActorSystem.ActorOf(Props.Create(() => new UpdateDatabaseActor(sensorItemDataRepositoryMongo)));
-            var updateLocalCacheActorRef = ActorSystem.ActorOf(Props.Create(() => new UpdateLocalCacheActor(WriteThroughLocalCache)));
-            var updateDistributedCacheActorRef = ActorSystem.ActorOf(
-                Props.Create(() => new UpdateDistributedCacheActor(RedisWriteThroughCache, cacheUpdateSensorDocumentMessageChannel)));
+                ActorSystem = ActorSystem.Create("RuzzieSensorDataActorSystem");
+                var updateDatabaseActorRef = ActorSystem.ActorOf(Props.Create(() => new UpdateDatabaseActor(sensorItemDataRepositoryMongo)));
+                var updateLocalCacheActorRef = ActorSystem.ActorOf(Props.Create(() => new UpdateLocalCacheActor(WriteThroughLocalCache)));
+                var updateDistributedCacheActorRef = ActorSystem.ActorOf(
+                    Props.Create(() => new UpdateDistributedCacheActor(RedisWriteThroughCache, cacheUpdateSensorDocumentMessageChannel)));
 
-            UpdateSensorDataActorRef = ActorSystem.ActorOf(
-                Props.Create(
-                    () => new UpdateSensorDataActor(updateDatabaseActorRef, updateLocalCacheActorRef, updateDistributedCacheActorRef)));
+                UpdateSensorDataActorRef = ActorSystem.ActorOf(
+                    Props.Create(
+                        () => new UpdateSensorDataActor(updateDatabaseActorRef, updateLocalCacheActorRef, updateDistributedCacheActorRef)));
 
-            PushDataService = new PushDataService(UpdateSensorDataActorRef);
+                PushDataService = new PushDataService(UpdateSensorDataActorRef);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine((e.Message));
+                throw;
+            }
         }
 
         private static ConnectionMultiplexer CreateRedisConnectionMultiplexer()
