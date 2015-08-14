@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ruzzie.SensorData.PushData;
+using Akka.Actor;
 
 namespace Ruzzie.SensorData.Web.PushData
 {
     public class PushDataService : IPushDataService
     {
-        public PushDataService(IDataWriteService dataWriteService)
-        {
-            DataWriteService = dataWriteService;
-        }
+        protected IActorRef UpdateDataActorRef { get; set; }
 
-        protected IDataWriteService DataWriteService { get; set; }
+        public PushDataService(IActorRef updateDataActorRef)
+        {
+            UpdateDataActorRef = updateDataActorRef;
+        }
         
         public async Task<DataResult> PushData(string thingName, DateTime currentDateTime,
             IEnumerable<KeyValuePair<string, string>> keyValuePairs)
@@ -45,7 +45,7 @@ namespace Ruzzie.SensorData.Web.PushData
             dynamic resultObject = MapKeyValuePairsToDynamic(keyValuePairsAsList);            
             result.ResultData = resultObject;
 
-            await DataWriteService.CreateOrUpdateDataForThing(thingName, result.Timestamp, result.ResultData);
+            await Task.Run(()=> UpdateDataActorRef.Tell(new UpdateSensorDataDocumentMessage(thingName,result.Timestamp,result.ResultData)));
 
             return result;
         }
@@ -70,7 +70,7 @@ namespace Ruzzie.SensorData.Web.PushData
 
                 result.ResultData = content;
 
-                await DataWriteService.CreateOrUpdateDataForThing(thingName, result.Timestamp, content);
+                await Task.Run(() => UpdateDataActorRef.Tell(new UpdateSensorDataDocumentMessage(thingName, result.Timestamp, result.ResultData)));
                 return result;
             }
             catch (Exception e)
