@@ -44,8 +44,6 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Cache\ICacheUpdateSensorDocumentMessageChannel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PushData\DataWriteServiceWithCache.cs" />
-    <Compile Include="PushData\IDataWriteService.cs" />
     <Compile Include="Repository\ISensorItemDataRepository.cs" />
     <Compile Include="SensorItemDataDocument.cs" />
   </ItemGroup>
