@@ -6,12 +6,31 @@ using System.Dynamic;
 
 namespace Ruzzie.SensorData
 {
+    internal static class ConcurrencyLevelHelper
+    {
+        static ConcurrencyLevelHelper()
+        {
+            int defaultConcurrencyMultiplier = 4;
+
+            int concurrencyLevel = Environment.ProcessorCount * defaultConcurrencyMultiplier;
+
+            if (concurrencyLevel == 0)
+            {
+                concurrencyLevel = defaultConcurrencyMultiplier;
+            }
+
+            DefaultConcurrencyLevel = concurrencyLevel;
+        }
+
+        public static int DefaultConcurrencyLevel { get;private set; }    
+    }
 
     [Serializable]
     public sealed class DynamicObjectDictionary : DynamicObject, IDictionary<string,object>
     {
+        private const int DefaultCapacity = 31;
         private readonly ConcurrentDictionary<string, dynamic> _internalMembers;
-
+       
         public DynamicObjectDictionary()
         {
             _internalMembers =
@@ -22,6 +41,17 @@ namespace Ruzzie.SensorData
         {
             _internalMembers =
                 new ConcurrentDictionary<string, dynamic>(internalMembers,(StringComparer.OrdinalIgnoreCase));
+        }
+
+        public DynamicObjectDictionary(int capacity)
+        {           
+            if (capacity <= 0)
+            {
+                capacity = DefaultCapacity;
+            }
+
+            _internalMembers = new ConcurrentDictionary<string, dynamic>(ConcurrencyLevelHelper.DefaultConcurrencyLevel, capacity,
+                StringComparer.OrdinalIgnoreCase);
         }
 
         private ConcurrentDictionary<string, dynamic> InternalMembers
