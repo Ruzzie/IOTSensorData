@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -7,13 +8,48 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Ruzzie.SensorData.Web;
 
 namespace Ruzzie.SensorData.UnitTests
 {
     [TestFixture]
     public class DynamicDictionaryObjectTests
     {
+
+        class ConstructorTests
+        {
+            [Test]
+            public void CreateWithoutParameters()
+            {
+                //Act
+                dynamic dynamicObjectDictionary = new DynamicObjectDictionary();
+                dynamicObjectDictionary.KeyOne = "1";
+                //Assert
+                Assert.That(dynamicObjectDictionary.keyone, Is.EqualTo("1"));
+                Assert.That(new DynamicObjectDictionary(), Is.Not.Null);
+            }
+
+            [Test]
+            public void CreateWithIEnumerable()
+            {
+                //Act
+                dynamic dynamicObjectDictionary = new DynamicObjectDictionary(new[]
+                {new KeyValuePair<string, dynamic>("KeyOne", "ValueOne"), new KeyValuePair<string, dynamic>("KeyTwo", 2),});
+
+                //Assert
+                Assert.That(dynamicObjectDictionary.keyOne, Is.EqualTo("ValueOne"));
+                Assert.That(dynamicObjectDictionary.KeyTwo , Is.EqualTo(2));
+            }
+
+            [Test]
+            public void CreateWithInitialSize()
+            {
+                //Act
+                dynamic dynamicObjectDictionary = new DynamicObjectDictionary(10);
+                dynamicObjectDictionary.KeyOne = "1";
+                //Assert
+                Assert.That(dynamicObjectDictionary.keyone, Is.EqualTo("1"));
+            }
+        }
 
         [Test]
         public void SetMemberViaIndexerTwiceShouldOverwriteValue()
@@ -229,10 +265,5 @@ namespace Ruzzie.SensorData.UnitTests
             return JsonConvert.SerializeObject(doc);
         }
     }
-
-
-         
-
-
-   
+            
 }

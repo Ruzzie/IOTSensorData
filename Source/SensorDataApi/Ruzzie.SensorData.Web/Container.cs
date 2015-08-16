@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Web;
 using Akka.Actor;
-using Akka.Event;
 using Ruzzie.SensorData.Cache;
 using Ruzzie.SensorData.GetData;
 using Ruzzie.SensorData.Repository;
@@ -60,7 +60,7 @@ namespace Ruzzie.SensorData.Web
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine((e.Message));
+                Debug.WriteLine((e.Message));
                 throw;
             }
         }

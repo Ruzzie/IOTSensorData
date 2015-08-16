@@ -35,6 +35,14 @@
       <HintPath>..\packages\Akka.1.0.4\lib\net45\Akka.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Akka.TestKit, Version=1.0.4.12, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.TestKit.1.0.4\lib\net45\Akka.TestKit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Akka.TestKit.NUnit, Version=1.0.4.12, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.TestKit.NUnit.1.0.4\lib\net45\Akka.TestKit.NUnit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
@@ -59,11 +67,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataWriteServiceTests.cs" />
+    <Compile Include="UpdateSensorDataActorTests.cs" />
     <Compile Include="DynamicDictionaryObjectTests.cs" />
     <Compile Include="GetDataServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushDataServiceTests.cs" />
+    <Compile Include="StubCacheUpdateSensorDocumentMessageChannel.cs" />
     <Compile Include="WebJobTests.cs" />
     <Compile Include="WriteThroughCacheTestBase.cs" />
     <Compile Include="WriteThroughLocalCacheTests.cs" />

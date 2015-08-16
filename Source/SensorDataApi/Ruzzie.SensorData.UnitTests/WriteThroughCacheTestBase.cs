@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Ruzzie.SensorData.Cache;
-using Ruzzie.SensorData.Web;
-using Ruzzie.SensorData.Web.Cache;
 
 namespace Ruzzie.SensorData.UnitTests
 {

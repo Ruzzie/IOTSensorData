@@ -84,8 +84,9 @@ namespace Ruzzie.SensorData.Web.PushData
 
         private static dynamic MapKeyValuePairsToDynamic(List<KeyValuePair<string, string>> keyValuePairs)
         {
-            dynamic result = new DynamicObjectDictionary();
-            for (int i = 0; i < keyValuePairs.Count; i++)
+            int count = keyValuePairs.Count;
+            dynamic result = new DynamicObjectDictionary(count);          
+            for (int i = 0; i < count; i++)
             {
                 if (string.IsNullOrWhiteSpace(keyValuePairs[i].Key) || string.IsNullOrWhiteSpace(keyValuePairs[i].Value))
                 {
